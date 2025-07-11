@@ -36,7 +36,7 @@ function populateConfirmationModal(data) {
     // ----- FIN DEL CÓDIGO CORREGIDO -----
 
     const { type: itemType, name } = data;
-    
+
     const headerTitleKey = `confirm_delete_title_${itemType}`;
     const messageKey = `confirm_delete_message_${itemType}`; // Aunque no se usa, lo mantenemos por si se añade en el futuro
     const itemTypeLabelKey = `delete_${itemType}_title_prefix`;
@@ -44,11 +44,11 @@ function populateConfirmationModal(data) {
     headerTitleElement.textContent = getTranslation(headerTitleKey, 'confirmation');
     itemTypeLabelElement.textContent = getTranslation(itemTypeLabelKey, 'confirmation');
     itemNameElement.value = name; // El nombre del item se pone en el input
-    
+
     // Asignar traducciones a los botones
     confirmButton.querySelector('span').setAttribute('data-translate', 'delete');
     confirmButton.querySelector('span').textContent = getTranslation('delete', 'confirmation');
-    
+
     cancelButton.querySelector('span').setAttribute('data-translate', 'cancel');
     cancelButton.querySelector('span').textContent = getTranslation('cancel', 'confirmation');
 }
@@ -57,21 +57,33 @@ function populateConfirmationModal(data) {
 function setupModalEventListeners() {
     const deleteMenu = document.querySelector('.menu-delete');
     if (!deleteMenu) return;
-    
-    // ----- CÓDIGO CORREGIDO: SE USAN SELECTORES MÁS ESPEECÍFICOS -----
+
     const confirmBtn = deleteMenu.querySelector('.menu-button--danger');
     const cancelBtn = deleteMenu.querySelector('.menu-button:not(.menu-button--danger)');
 
     if (confirmBtn) {
-        // Remover listener anterior para evitar duplicados
+        // Se reemplaza el botón para evitar acumulación de listeners
         const newConfirmBtn = confirmBtn.cloneNode(true);
         confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+        // --- INICIO DE LA MODIFICACIÓN ---
         newConfirmBtn.addEventListener('click', () => {
-            if (typeof onConfirmCallback === 'function') {
-                onConfirmCallback();
-            }
-            hideModal();
+            // 1. Añade el spinner y deshabilita el botón
+            addSpinnerToCreateButton(newConfirmBtn);
+
+            // 2. Espera el tiempo definido en CREATION_TIMEOUT
+            setTimeout(() => {
+                // 3. Ejecuta la función de borrado
+                if (typeof onConfirmCallback === 'function') {
+                    onConfirmCallback();
+                }
+                // 4. Cierra el modal de confirmación
+                hideModal();
+                // Nota: No es necesario remover el spinner manualmente,
+                // ya que el menú se oculta y se reiniciará la próxima vez que se abra.
+            }, CREATION_TIMEOUT);
         });
+        // --- FIN DE LA MODIFICACIÓN ---
     }
 
     if (cancelBtn) {
@@ -79,9 +91,7 @@ function setupModalEventListeners() {
         cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
         newCancelBtn.addEventListener('click', () => hideModal());
     }
-     // ----- FIN DEL CÓDIGO CORREGIDO -----
 }
-
 
 export function showModal(type, data = {}, onConfirm = null) {
     activeModalType = type;
@@ -252,7 +262,8 @@ function getMenuElement(menuName) {
         'menuCalendar': '.menu-calendar[data-menu="calendar"]',
         'timePicker': '.menu-timePicker[data-menu="timePicker"]',
         'timeZone': '.menu-timeZone[data-menu="timeZone"]',
-        'menuFeedbackTypes': '.menu-feedback-types[data-menu="feedbackTypes"]'
+        'menuFeedbackTypes': '.menu-feedback-types[data-menu="feedbackTypes"]',
+        'menuFeedback': '.menu-feedback[data-menu="feedback"]' // <-- Entrada añadida
     };
     return document.querySelector(menuSelectorMap[menuName]);
 };
@@ -426,7 +437,31 @@ const resetWorldClockMenu = (menuElement) => {
 
     menuElement.removeAttribute('data-editing-id');
 };
+const resetFeedbackMenu = (menuElement) => {
+    if (!menuElement) return;
+    const feedbackForm = menuElement.querySelector('#feedback-form');
+    if (!feedbackForm) return;
 
+    feedbackForm.reset();
+
+    const typeDisplay = feedbackForm.querySelector('#feedback-type-display');
+    const typeInput = feedbackForm.querySelector('#feedback-type-value');
+    if (typeDisplay && typeInput) {
+        const defaultTypeKey = 'feedback_type_contact_support';
+        typeDisplay.setAttribute('data-translate', defaultTypeKey);
+        typeDisplay.textContent = getTranslation(defaultTypeKey, 'menu');
+        typeInput.value = 'contact_support';
+    }
+
+    const emailInputParent = feedbackForm.querySelector('#feedback-email').parentElement;
+    const messageInputParent = feedbackForm.querySelector('#feedback-text').parentElement;
+    if (emailInputParent) {
+        emailInputParent.classList.remove('input-error');
+    }
+    if (messageInputParent) {
+        messageInputParent.classList.remove('input-error');
+    }
+};
 export function prepareAlarmForEdit(alarmData) {
     const menuElement = getMenuElement('menuAlarm');
     if (!menuElement) return;
@@ -620,6 +655,7 @@ export function resetMenuForOverlay(menuName) {
         case 'menuAlarm': resetAlarmMenu(menuElement); break;
         case 'menuTimer': resetTimerMenu(menuElement); break;
         case 'menuWorldClock': resetWorldClockMenu(menuElement); break;
+        case 'menuFeedback': resetFeedbackMenu(menuElement); break;
     }
 }
 
@@ -738,8 +774,8 @@ const populateHourSelectionMenu = () => {
     if (!timePickerMenu) return;
     const hourMenu = timePickerMenu.querySelector('.menu-list[data-list-type="hours"]');
     if (!hourMenu) return;
-    
-    hourMenu.innerHTML = ''; 
+
+    hourMenu.innerHTML = '';
 
     if (use24HourFormat) {
         for (let i = 0; i < 24; i++) {
@@ -759,7 +795,7 @@ const populateHourSelectionMenu = () => {
             const link = document.createElement('div');
             link.className = 'menu-link';
             link.setAttribute('data-action', 'selectTimerHour');
-            link.setAttribute('data-hour', i); 
+            link.setAttribute('data-hour', i);
             link.innerHTML = `<div class="menu-link-text"><span>${displayHour}:00 ${ampm}</span></div>`;
             hourMenu.appendChild(link);
         }
@@ -985,7 +1021,7 @@ function setupGlobalEventListeners() {
     });
 
     document.body.addEventListener('click', (event) => {
-       const parentMenu = event.target.closest('.menu-alarm, .menu-timer, .menu-worldClock, .menu-sounds, .menu-country, .menu-timeZone, .menu-calendar, .menu-timePicker, .menu-feedback, .menu-feedback-types');
+        const parentMenu = event.target.closest('.menu-alarm, .menu-timer, .menu-worldClock, .menu-sounds, .menu-country, .menu-timeZone, .menu-calendar, .menu-timePicker, .menu-feedback, .menu-feedback-types');
         if (!parentMenu || autoIncrementState.isActive) return;
         handleMenuClick(event, parentMenu);
     });
@@ -1045,7 +1081,7 @@ async function handleMenuClick(event, parentMenu) {
         const value = option.dataset.value;
         const textSpan = option.querySelector('span[data-translate]');
         const feedbackMenu = document.querySelector('.menu-feedback');
-        if(!feedbackMenu) return;
+        if (!feedbackMenu) return;
 
         const display = feedbackMenu.querySelector('#feedback-type-display');
         const hiddenInput = feedbackMenu.querySelector('#feedback-type-value');
@@ -1243,7 +1279,7 @@ async function handleMenuClick(event, parentMenu) {
             updateDisplay('#selected-hour-display', displayHour, getMenuElement('menuTimer'));
 
             const minuteDisplay = getMenuElement('menuTimer').querySelector('#selected-minute-display');
-            if(minuteDisplay) {
+            if (minuteDisplay) {
                 minuteDisplay.textContent = '--' + displayAmPm;
             }
 
@@ -1428,7 +1464,6 @@ async function handleMenuClick(event, parentMenu) {
         }
     }
 }
-
 function initializeFeedbackForm() {
     const feedbackForm = document.getElementById('feedback-form');
     if (!feedbackForm) return;
@@ -1443,9 +1478,6 @@ function initializeFeedbackForm() {
 
         let isValid = true;
 
-        // Se valida que el textarea no esté vacío.
-        // La función validateField apunta a messageInput.parentElement,
-        // que ahora es el div .custom-text-content.
         if (messageInput.value.trim() === '') {
             validateField(messageInput.parentElement, false);
             isValid = false;
@@ -1453,7 +1485,6 @@ function initializeFeedbackForm() {
             validateField(messageInput.parentElement, true);
         }
 
-        // Se valida que el email no esté vacío y tenga un formato válido.
         if (emailInput.value.trim() === '' || !/^\S+@\S+\.\S+$/.test(emailInput.value)) {
             validateField(emailInput.parentElement, false);
             isValid = false;
@@ -1468,35 +1499,40 @@ function initializeFeedbackForm() {
 
         addSpinnerToCreateButton(submitButton);
 
-        try {
-            const formData = new FormData(feedbackForm);
-            const response = await fetch(feedbackForm.action, {
-                method: 'POST',
-                body: formData
-            });
-            const result = await response.json();
+        setTimeout(async () => {
+            try {
+                const formData = new FormData(feedbackForm);
+                const response = await fetch(feedbackForm.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
 
-            if (result.success) {
-                showDynamicIslandNotification('system', 'success', result.message || 'Comentario enviado con éxito.', 'notifications');
-                feedbackForm.reset();
+                if (result.success) {
+                    // Ahora se usa la clave 'success_title' y la clave del mensaje de la respuesta
+                    showDynamicIslandNotification('system', 'success', result.message, 'notifications');
+                    feedbackForm.reset();
 
-                const typeDisplay = document.getElementById('feedback-type-display');
-                if (typeDisplay) {
-                    typeDisplay.setAttribute('data-translate', 'feedback_type_improvement');
-                    typeDisplay.textContent = getTranslation('feedback_type_improvement', 'menu');
-                    typeInput.value = 'improvement';
+                    const typeDisplay = document.getElementById('feedback-type-display');
+                    if (typeDisplay) {
+                        typeDisplay.setAttribute('data-translate', 'feedback_type_improvement');
+                        typeDisplay.textContent = getTranslation('feedback_type_improvement', 'menu');
+                        typeInput.value = 'improvement';
+                    }
+
+                    deactivateModule('toggleFeedbackMenu');
+                } else {
+                    // Se usa la clave del mensaje de error de la respuesta
+                    showDynamicIslandNotification('system', 'error', result.message, 'notifications');
                 }
-
-                deactivateModule('toggleFeedbackMenu');
-            } else {
-                showDynamicIslandNotification('system', 'error', result.message || 'Ocurrió un error.', 'notifications');
+            } catch (error) {
+                console.error('Error submitting feedback:', error);
+                 // Se usa una clave de traducción para el error de conexión
+                showDynamicIslandNotification('system', 'error', 'feedback_error_server', 'notifications');
+            } finally {
+                removeSpinnerFromCreateButton(submitButton);
             }
-        } catch (error) {
-            console.error('Error submitting feedback:', error);
-            showDynamicIslandNotification('system', 'error', 'No se pudo conectar con el servidor.', 'notifications');
-        } finally {
-            removeSpinnerFromCreateButton(submitButton);
-        }
+        }, CREATION_TIMEOUT);
     });
 
     const cancelButton = feedbackForm.querySelector('[data-action="cancel-feedback"]');

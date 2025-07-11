@@ -117,7 +117,13 @@
     "loading_countries_error": "Erreur lors du chargement de la liste des pays.",
     "premium_limit_reached_message": "Devenez premium pour augmenter la limite disponible",
     "limit_reached_message_premium": "La limite maximale de {type} disponibles a été atteinte.",
-    "dismiss": "Rejeter"
+    "dismiss": "Rejeter",
+    "success_title": "Succès",
+    "feedback_success_sent": "Commentaire envoyé avec succès ! Merci pour vos retours.",
+    "feedback_error_all_fields": "Veuillez remplir tous les champs.",
+    "feedback_error_invalid_email": "Veuillez saisir une adresse e-mail valide.",
+    "feedback_error_server": "Erreur du serveur, veuillez réessayer plus tard.",
+    "feedback_error_sending": "Erreur lors de l'envoi du commentaire, veuillez réessayer plus tard."
   },
   "color_system": {
     "color_unavailable": "Non disponible",
@@ -192,7 +198,7 @@
     "white": "Blanc",
     "yellow": "Jaune"
   },
-"menu": {
+  "menu": {
     "appearance": "Apparence",
     "dark_theme": "Thème sombre",
     "email": "Email",

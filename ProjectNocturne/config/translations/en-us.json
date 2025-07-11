@@ -117,7 +117,13 @@
     "loading_countries_error": "Error loading countries list.",
     "premium_limit_reached_message": "Become premium to increase the available limit",
     "limit_reached_message_premium": "The maximum limit of available {type} has been reached.",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "success_title": "Success",
+    "feedback_success_sent": "Feedback sent successfully! Thank you for your comments.",
+    "feedback_error_all_fields": "Please complete all fields.",
+    "feedback_error_invalid_email": "Please enter a valid email address.",
+    "feedback_error_server": "Server error, please try again later.",
+    "feedback_error_sending": "Error sending feedback, please try again later."
   },
   "color_system": {
     "color_unavailable": "Not available",
@@ -192,7 +198,7 @@
     "white": "White",
     "yellow": "Yellow"
   },
-"menu": {
+  "menu": {
     "appearance": "Appearance",
     "dark_theme": "Dark Theme",
     "email": "Email",
@@ -337,7 +343,7 @@
     "default_audios": "Default Audios",
     "audio_singular": "Audio"
   },
- "timer": {
+  "timer": {
     "h": "h",
     "min": "min",
     "s": "s",

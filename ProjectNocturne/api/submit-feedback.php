@@ -11,13 +11,15 @@ $email = isset($_POST['email']) ? trim($_POST['email']) : '';
 
 // Validación de campos
 if (empty($feedback_type) || empty($message) || empty($email)) {
-    echo json_encode(['success' => false, 'message' => 'Por favor, completa todos los campos.']);
+    // Devuelve una clave de traducción para el error
+    echo json_encode(['success' => false, 'message' => 'feedback_error_all_fields']);
     exit;
 }
 
 // Validación específica del formato de email
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    echo json_encode(['success' => false, 'message' => 'Por favor, introduce una dirección de correo electrónico válida.']);
+    // Devuelve una clave de traducción para el error
+    echo json_encode(['success' => false, 'message' => 'feedback_error_invalid_email']);
     exit;
 }
 
@@ -26,7 +28,8 @@ $stmt = $conn->prepare("INSERT INTO feedback (feedback_type, message, email) VAL
 if ($stmt === false) {
     // Log del error para depuración interna, no exponer detalles al usuario
     error_log('Error al preparar la consulta: ' . $conn->error);
-    echo json_encode(['success' => false, 'message' => 'Error del servidor, por favor intenta más tarde.']);
+    // Devuelve una clave de traducción genérica para el error del servidor
+    echo json_encode(['success' => false, 'message' => 'feedback_error_server']);
     exit;
 }
 
@@ -35,11 +38,13 @@ $stmt->bind_param("sss", $feedback_type, $message, $email);
 
 // Ejecutar y verificar
 if ($stmt->execute()) {
-    echo json_encode(['success' => true, 'message' => '¡Comentario enviado con éxito! Gracias por tu feedback.']);
+    // Devuelve una clave de traducción para el mensaje de éxito
+    echo json_encode(['success' => true, 'message' => 'feedback_success_sent']);
 } else {
     // Log del error para depuración interna
     error_log('Error al ejecutar la consulta: ' . $stmt->error);
-    echo json_encode(['success' => false, 'message' => 'Error al enviar el comentario, por favor intenta más tarde.']);
+    // Devuelve una clave de traducción para el error al enviar
+    echo json_encode(['success' => false, 'message' => 'feedback_error_sending']);
 }
 
 // Cerrar todo
