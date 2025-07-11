@@ -1002,6 +1002,7 @@ function toggleSectionCollapse(sectionId) {
         if (isCollapsed) {
             contentElement.classList.remove('collapsed');
             contentElement.classList.add('expanded');
+            collapseButton.classList.add('expanded');
             contentElement.setAttribute('data-section-collapsed', 'false');
             collapseButton.setAttribute('aria-expanded', 'true');
             expandIcon.style.transform = 'rotate(0deg)';
@@ -1009,6 +1010,7 @@ function toggleSectionCollapse(sectionId) {
         } else {
             contentElement.classList.remove('expanded');
             contentElement.classList.add('collapsed');
+            collapseButton.classList.remove('expanded');
             contentElement.setAttribute('data-section-collapsed', 'true');
             collapseButton.setAttribute('aria-expanded', 'false');
             expandIcon.style.transform = 'rotate(-90deg)';

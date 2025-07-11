@@ -1191,8 +1191,8 @@ body {
     .menu-calendar,
     .menu-timePicker,
     .menu-delete,
-    .menu-suggestions,
-    .menu-suggestion-types {
+    .menu-feedback,
+    .menu-feedback-types {
         height: auto;
         max-height: 85%;
         min-height: 85%;
