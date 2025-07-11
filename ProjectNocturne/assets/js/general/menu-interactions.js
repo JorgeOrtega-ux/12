@@ -121,7 +121,7 @@ export function hideModal() {
 }
 
 
-// ========== LÓGICA ORIGINAL DE MENU-INTERACTIONS (SIN CAMBIOS) ==========
+// ========== LÓGICA ORIGINAL DE MENU-INTERACTIONS (CON CAMBIOS) ==========
 
 let currentlyPlayingSound = null;
 let soundTimeout = null;
@@ -886,8 +886,10 @@ async function populateSoundsMenu(context) {
     } else if (context === 'count_to_date') {
         activeSoundId = state.timer.countTo.sound;
     }
-
-    await generateSoundList(uploadContainer, listContainer, 'selectSound', activeSoundId);
+    // --- INICIO DE LA MODIFICACIÓN ---
+    // Cambiamos el data-action a 'stageSound'
+    await generateSoundList(uploadContainer, listContainer, 'stageSound', activeSoundId);
+    // --- FIN DE LA MODIFICACIÓN ---
 }
 
 function setupGlobalEventListeners() {
@@ -1217,22 +1219,43 @@ async function handleMenuClick(event, parentMenu) {
         case 'back-to-previous-menu':
             navigateBack();
             break;
-        case 'selectSound':
+        // --- INICIO DE LA MODIFICACIÓN ---
+        case 'stageSound': { // Nueva acción para marcar un sonido como preseleccionado
             event.stopPropagation();
-            const soundId = target.closest('.menu-link').dataset.soundId;
-            const soundName = getSoundNameById(soundId);
-            if (soundSelectionContext === 'alarm') {
-                state.alarm.sound = soundId;
-                updateDisplay('#alarm-selected-sound', soundName, getMenuElement('menuAlarm'));
-            } else if (soundSelectionContext === 'countdown') {
-                state.timer.sound = soundId;
-                updateDisplay('#countdown-selected-sound', soundName, getMenuElement('menuTimer'));
-            } else if (soundSelectionContext === 'count_to_date') {
-                state.timer.countTo.sound = soundId;
-                updateDisplay('#count-to-date-selected-sound', soundName, getMenuElement('menuTimer'));
-            }
-            navigateBack();
+            const selectedLink = target.closest('.menu-link');
+            if (!selectedLink) return;
+
+            // Quitar la clase 'active' de cualquier otro link
+            const allLinks = parentMenu.querySelectorAll('.menu-link[data-action="stageSound"]');
+            allLinks.forEach(link => link.classList.remove('active'));
+
+            // Añadir la clase 'active' al link clickeado
+            selectedLink.classList.add('active');
             break;
+        }
+        case 'select-audio': { // Acción para el nuevo botón "Seleccionar audio"
+            event.stopPropagation();
+            const soundsMenu = document.querySelector('.menu-sounds');
+            const stagedSoundLink = soundsMenu.querySelector('.menu-link[data-action="stageSound"].active');
+
+            if (stagedSoundLink) {
+                const soundId = stagedSoundLink.dataset.soundId;
+                const soundName = getSoundNameById(soundId);
+                if (soundSelectionContext === 'alarm') {
+                    state.alarm.sound = soundId;
+                    updateDisplay('#alarm-selected-sound', soundName, getMenuElement('menuAlarm'));
+                } else if (soundSelectionContext === 'countdown') {
+                    state.timer.sound = soundId;
+                    updateDisplay('#countdown-selected-sound', soundName, getMenuElement('menuTimer'));
+                } else if (soundSelectionContext === 'count_to_date') {
+                    state.timer.countTo.sound = soundId;
+                    updateDisplay('#count-to-date-selected-sound', soundName, getMenuElement('menuTimer'));
+                }
+                navigateBack(); // Volver al menú anterior después de seleccionar
+            }
+            break;
+        }
+        // --- FIN DE LA MODIFICACIÓN ---
         case 'selectCountry':
             event.stopPropagation();
             const countryCode = target.closest('.menu-link').getAttribute('data-country-code');

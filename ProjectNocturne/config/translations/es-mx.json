@@ -393,7 +393,8 @@
     "upload_audio": "Subir Audio",
     "uploaded_audios": "Audios Subidos",
     "default_audios": "Audios Predeterminados",
-    "audio_singular": "Audio"
+    "audio_singular": "Audio",
+    "select_audio": "Seleccionar audio"
   },
   "timer": {
     "h": "h",

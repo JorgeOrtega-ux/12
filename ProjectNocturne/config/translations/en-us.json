@@ -394,7 +394,8 @@
     "upload_audio": "Upload Audio",
     "uploaded_audios": "Uploaded Audios",
     "default_audios": "Default Audios",
-    "audio_singular": "Audio"
+    "audio_singular": "Audio",
+    "select_audio": "Select audio"
   },
   "timer": {
     "h": "h",
