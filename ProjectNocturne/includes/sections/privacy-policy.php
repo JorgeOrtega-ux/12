@@ -158,7 +158,7 @@
         Su opinión es fundamental para nosotros, y la comunicación abierta es un pilar de nuestra filosofía de servicio. Estamos a su completa disposición para resolver cualquier duda, inquietud o solicitud de información que pueda surgir en relación con esta Política de Privacidad, nuestras prácticas de tratamiento de datos o cualquier otro aspecto relacionado con su privacidad en nuestra Plataforma.
     </p>
     <p>
-        Si desea ejercer cualquiera de sus derechos de Acceso, Rectificación, Cancelación u Oposición (ARCO), o si simplemente desea obtener una mayor clarificación sobre algún punto, le invitamos a utilizar nuestro canal de comunicación oficial. Puede ponerse en contacto con nuestro equipo a través del **<a href="#" data-action="suggest-improvements" class="legal-link">formulario de sugerencias</a>** disponible directamente en la Plataforma.
+        Si desea ejercer cualquiera de sus derechos de Acceso, Rectificación, Cancelación u Oposición (ARCO), o si simplemente desea obtener una mayor clarificación sobre algún punto, le invitamos a utilizar nuestro canal de comunicación oficial. Puede ponerse en contacto con nuestro equipo a través del **<a href="#" data-action="submit-feedback" class="legal-link">formulario de comentarios</a>** disponible directamente en la Plataforma.
     </p>
     <p>
         Nos comprometemos a acusar recibo de su comunicación, a gestionar su solicitud con la debida diligencia y profesionalidad, y a responderle en los plazos legalmente establecidos, proporcionándole toda la asistencia necesaria para garantizar que tenga un control efectivo y transparente sobre su información.

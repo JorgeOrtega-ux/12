@@ -1,4 +1,4 @@
-// ========== general-tools.js - CÓDIGO COMPLETO CORREGIDO ==========
+// assets/js/tools/general-tools.js
 
 import { getTranslation } from '../general/translations-controller.js';
 import { showModal } from '../general/menu-interactions.js';
@@ -8,13 +8,23 @@ const DB_NAME = 'ProjectNocturneDB';
 const DB_VERSION = 1;
 const AUDIO_STORE_NAME = 'user_audio_store';
 
+// --- INICIO DE LA CORRECCIÓN ---
 let db = null;
+let dbPromise = null; // Variable para almacenar la promesa de la conexión
+// --- FIN DE LA CORRECCIÓN ---
+
 let isCachePopulated = false;
 let userAudiosCache = [];
 let audioCachePromise = null;
 
+// --- INICIO DE LA CORRECCIÓN ---
+// Se modifica la función openDB para evitar múltiples inicializaciones.
 function openDB() {
-    return new Promise((resolve, reject) => {
+    if (dbPromise) {
+        return dbPromise;
+    }
+
+    dbPromise = new Promise((resolve, reject) => {
         if (db) {
             return resolve(db);
         }
@@ -36,10 +46,14 @@ function openDB() {
 
         request.onerror = (event) => {
             console.error('Error opening IndexedDB:', event.target.error);
+            dbPromise = null; // Resetear la promesa en caso de error para permitir reintentos
             reject('Error opening IndexedDB');
         };
     });
+
+    return dbPromise;
 }
+// --- FIN DE LA CORRECCIÓN ---
 
 export function initDB() {
     return openDB();

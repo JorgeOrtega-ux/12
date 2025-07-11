@@ -25,7 +25,7 @@
                                 <div class="menu-content-header">
                                     <div class="menu-content-header-primary">
                                         <span class="material-symbols-rounded">email</span>
-                                        <span>Correo Electrónico</span>
+                                        <span data-translate="email" data-translate-category="menu"></span>
                                     </div>
                                 </div>
                                 <div class="menu-content-general">
