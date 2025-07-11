@@ -21,10 +21,11 @@
         <div class="menu-content-scrolleable overflow-y">
             <div class="search-results-wrapper disabled"></div>
             <div class="creation-wrapper active">
-                <div class="menu-section-center" id="upload-audio-wrapper"></div>
-                <div class="menu-section-center overflow-y" id="sound-list-wrapper"></div>
+                <div class="creation-content">
+                    <div class="menu-section-center" id="upload-audio-wrapper"></div>
+                    <div class="menu-section-bottom overflow-y" id="sound-list-wrapper"></div>
+                </div>
             </div>
         </div>
-        <div class="menu-section-bottom disabled"></div>
     </div>
 </div>

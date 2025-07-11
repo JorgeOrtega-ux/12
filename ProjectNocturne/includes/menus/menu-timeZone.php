@@ -27,6 +27,5 @@
                 </div>
             </div>
         </div>
-        <div class="menu-section-bottom disabled"></div>
     </div>
 </div>

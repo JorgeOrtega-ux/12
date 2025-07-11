@@ -1465,16 +1465,20 @@ async function handleMenuClick(event, parentMenu) {
     }
 }
 function initializeFeedbackForm() {
-    const feedbackForm = document.getElementById('feedback-form');
-    if (!feedbackForm) return;
+    // MODIFICADO: Seleccionar el contenedor principal del menú de feedback
+    const feedbackMenu = document.querySelector('.menu-feedback[data-menu="feedback"]');
+    if (!feedbackMenu) return;
 
-    feedbackForm.addEventListener('submit', async function(e) {
+    // MODIFICADO: El evento ahora es un 'click' en el botón de envío
+    const submitButton = feedbackMenu.querySelector('[data-action="submit-feedback-form"]');
+    if (!submitButton) return;
+
+    submitButton.addEventListener('click', async function(e) {
         e.preventDefault();
 
-        const submitButton = feedbackForm.querySelector('button[type="submit"]');
-        const messageInput = feedbackForm.querySelector('#feedback-text');
-        const emailInput = feedbackForm.querySelector('#feedback-email');
-        const typeInput = feedbackForm.querySelector('#feedback-type-value');
+        const messageInput = feedbackMenu.querySelector('#feedback-text');
+        const emailInput = feedbackMenu.querySelector('#feedback-email');
+        const typeInput = feedbackMenu.querySelector('#feedback-type-value');
 
         let isValid = true;
 
@@ -1501,38 +1505,42 @@ function initializeFeedbackForm() {
 
         setTimeout(async () => {
             try {
-                const formData = new FormData(feedbackForm);
+                // MODIFICADO: Crear FormData manualmente ya que no hay <form>
+                const formData = new FormData();
+                formData.append('feedback_type', typeInput.value);
+                formData.append('email', emailInput.value);
+                formData.append('feedback_text', messageInput.value);
+
                 const uuid = localStorage.getItem('user-unique-id');
                 if (uuid) {
                     formData.append('uuid', uuid);
                 }
 
-                const response = await fetch(feedbackForm.action, {
+                const response = await fetch('api/submit-feedback.php', {
                     method: 'POST',
                     body: formData
                 });
                 const result = await response.json();
 
                 if (result.success) {
-                    // Ahora se usa la clave 'success_title' y la clave del mensaje de la respuesta
                     showDynamicIslandNotification('system', 'success', result.message, 'notifications');
-                    feedbackForm.reset();
-
-                    const typeDisplay = document.getElementById('feedback-type-display');
-                    if (typeDisplay) {
-                        typeDisplay.setAttribute('data-translate', 'feedback_type_improvement');
-                        typeDisplay.textContent = getTranslation('feedback_type_improvement', 'menu');
-                        typeInput.value = 'improvement';
+                    
+                    // MODIFICADO: Resetear campos manualmente
+                    emailInput.value = '';
+                    messageInput.value = '';
+                    typeInput.value = 'contact_support';
+                    const typeDisplay = feedbackMenu.querySelector('#feedback-type-display');
+                    if(typeDisplay) {
+                        typeDisplay.setAttribute('data-translate', 'feedback_type_contact_support');
+                        typeDisplay.textContent = getTranslation('feedback_type_contact_support', 'menu');
                     }
 
                     deactivateModule('toggleFeedbackMenu');
                 } else {
-                    // Se usa la clave del mensaje de error de la respuesta
                     showDynamicIslandNotification('system', 'error', result.message, 'notifications');
                 }
             } catch (error) {
                 console.error('Error submitting feedback:', error);
-                 // Se usa una clave de traducción para el error de conexión
                 showDynamicIslandNotification('system', 'error', 'feedback_error_server', 'notifications');
             } finally {
                 removeSpinnerFromCreateButton(submitButton);
@@ -1540,7 +1548,7 @@ function initializeFeedbackForm() {
         }, CREATION_TIMEOUT);
     });
 
-    const cancelButton = feedbackForm.querySelector('[data-action="cancel-feedback"]');
+    const cancelButton = feedbackMenu.querySelector('[data-action="cancel-feedback"]');
     if (cancelButton) {
         cancelButton.addEventListener('click', () => {
             deactivateModule('toggleFeedbackMenu');
@@ -1548,6 +1556,7 @@ function initializeFeedbackForm() {
     }
 }
 
+// Asegurarse de que la función se llama al cargar la página
 document.addEventListener('DOMContentLoaded', initializeFeedbackForm);
 
 window.getCurrentlyPlayingSoundId = () => currentlyPlayingSound ? currentlyPlayingSound.id : null;
