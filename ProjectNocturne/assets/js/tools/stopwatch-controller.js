@@ -34,8 +34,11 @@ function saveState() {
 }
 
 function loadState() {
-    const savedState = localStorage.getItem('stopwatchState');
-    if (!savedState) return;
+   const savedState = localStorage.getItem('stopwatchState');
+    if (!savedState) {
+        updateButtonStates(); // Asegura el estado inicial correcto de los botones
+        return;
+    }
 
     const parsedState = JSON.parse(savedState);
     stopwatchState.laps = parsedState.laps || [];

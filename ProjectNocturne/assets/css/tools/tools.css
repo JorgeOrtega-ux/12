@@ -1352,7 +1352,7 @@
     font-size: 2.5rem;
     margin-bottom: 16px;
     padding-bottom: 16px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #00000020;
 }
 
 .section-legal-content h2 {
@@ -1360,7 +1360,7 @@
     margin-top: 32px;
     margin-bottom: 16px;
     padding-bottom: 8px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #00000020;
 }
 
 .feedback-text {
@@ -1398,8 +1398,11 @@
 
 .section-legal-content .legal-link {
     color: #007bff;
-    text-decoration: none;
     font-weight: 500;
+}
+
+.dark-mode .custom-text-content {
+    border-color: #ffffff20;
 }
 
 .section-legal-content .legal-link:hover {
@@ -1408,13 +1411,21 @@
 
 /* Dark Mode Overrides */
 .dark-mode .section-legal-content h1 {
-    border-bottom-color: #444;
+    border-bottom-color: #ffffff20;
+    color: #ffffffe6;
 }
 
 .dark-mode .section-legal-content h2 {
-    border-bottom-color: #333;
+    border-bottom-color: #ffffff20;
+        color: #ffffffe6;
 }
 
+.dark-mode .section-legal-content p {
+    color: #ffffffe6;
+}
+.dark-mode .section-legal-content ul {
+    color: #ffffffe6;
+}
 .dark-mode .section-legal-content .legal-link {
     color: #58a6ff;
 }
@@ -1475,56 +1486,6 @@
 
 .clock-date {
     font-size: 1.2rem;
-    color: #000000e6;
-}
-
-.widget-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.widget-list-item {
-    display: flex;
-    align-items: center;
-    height: 50px;
-    gap: 12px;
-    border-radius: 8px;
-    transition: background-color 0.2s ease;
-    cursor: pointer;
-}
-
-.widget-list-item:hover {
-    background-color: #f5f5fa;
-}
-
-.widget-list-item-icon {
-    display: flex;
-    flex-shrink: 0;
-    justify-content: center;
-    align-items: center;
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
-    color: #6e6e73;
-}
-
-.widget-list-item-details {
-    display: flex;
-    flex-grow: 1;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-}
-
-.widget-list-item-title {
-    font-weight: 500;
-    color: #1d1d1f;
-}
-
-.widget-list-item-value {
-    font-size: 12px;
-    font-weight: 500;
     color: #000000e6;
 }
 

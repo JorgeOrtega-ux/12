@@ -619,7 +619,7 @@ function createTimerCard(timer) {
     card.innerHTML = `
         <div class="card-header">
             <div class="card-details">
-                <span class="card-title" title="${titleText}">${titleText}</span>
+                <span class="card-title">${titleText}</span>
                 <span class="card-value">${formatTime(timer.remaining, timer.type)}</span>
             </div>
         </div>

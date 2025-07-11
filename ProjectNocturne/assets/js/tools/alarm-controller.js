@@ -696,7 +696,7 @@ function createAlarmCard(alarm) {
         <div class="tool-card alarm-card ${!alarm.enabled ? 'alarm-disabled' : ''}" id="${alarm.id}" data-id="${alarm.id}" data-type="${alarm.type}">
             <div class="card-header">
                 <div class="card-details">
-                    <span class="card-title" title="${translatedTitle}">${translatedTitle}</span>
+                    <span class="card-title">${translatedTitle}</span>
                     <span class="card-value">${formatTime(alarm.hour, alarm.minute)}</span>
                 </div>
             </div>

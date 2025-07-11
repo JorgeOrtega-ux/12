@@ -338,7 +338,7 @@ function createAndStartClockCard(title, country, timezone, existingId = null, sa
         <div class="tool-card world-clock-card" id="${cardId}" data-id="${cardId}" data-timezone="${timezone}" data-country="${country}" data-country-code="${countryCode}" data-title="${title}">
             <div class="card-header">
                 <div class="card-details">
-                    <span class="card-title" title="${title}">${title}</span>
+                    <span class="card-title">${title}</span>
                     <span class="card-value">--:--:--</span>
                 </div>
             </div>

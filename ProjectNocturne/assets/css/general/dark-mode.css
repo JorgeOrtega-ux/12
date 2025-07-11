@@ -168,16 +168,32 @@
 .dark-mode .menu-timePicker,
 .dark-mode .menu-calendar,
 .dark-mode .menu-delete,
-.dark-mode .menu-suggestions,
-.dark-mode .menu-suggestion-types {
+.dark-mode .menu-feedback,
+.dark-mode .menu-feedback-types {
     color: #ffffff;
     background-color: #252627;
     border-color: #ffffff20;
     filter: unset;
 }
+.dark-mode .menu-button.menu-button--primary {
+    background-color: #fff;
+    color: #000000;
+    border-color: #ffffff;
+}
+
+.dark-mode .menu-button {
+    color: #ffffff;
+    border-color: #ffffff20;
+}
 .dark-mode .menu-back-btn {
     border-color: #ffffff20;
     color: #ffffff;
+}
+.dark-mode .menu-button:hover {
+    background-color: #ffffff20;
+}
+.dark-mode .menu-button.menu-button--primary:hover {
+    background-color: #fff;
 }
 .dark-mode .menu-back-btn:hover {
     background-color: #ffffff20;
