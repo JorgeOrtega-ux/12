@@ -240,6 +240,54 @@
 .dropdown-menu-container.disabled {
     display: none;
 }
+.menu-link-actions-wrapper {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex
+;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    pointer-events: none;
+    background-color: #ffffff;
+    padding: 2px 4px;
+    border-radius: 8px;
+}
+
+/* Mostrar el wrapper al pasar el mouse sobre el menu-link */
+.menu-link:hover .menu-link-actions-wrapper {
+    opacity: 1;
+    pointer-events: auto; /* Se vuelve interactuable */
+}
+
+/* Estilo para los botones dentro del wrapper */
+.menu-link-actions-wrapper .interactive-icon {
+    display: flex
+;
+    justify-content: center;
+    align-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.menu-link-actions-wrapper .interactive-icon:hover {
+    background-color: #f5f5fa; 
+}
+
+/* Versión para el modo oscuro */
+.dark-mode .menu-link-actions-wrapper {
+    background-color: #3a3b3d; /* Fondo oscuro para el wrapper */
+}
+
+.dark-mode .menu-link-actions-wrapper .interactive-icon:hover {
+    background-color: #ffffff20;
+}
 
 .menu-action-button {
     display: flex;

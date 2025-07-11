@@ -218,14 +218,14 @@
 
                     </div>
                 </div>
-                <div class="menu-section-bottom">
-                    <button class="menu-button menu-button--primary" data-action="createTimer">
-                        <span data-translate="create_timer" data-translate-category="timer"></span>
-                    </button>
-                </div>
+
             </div>
         </div>
 
-
+        <div class="menu-section-bottom">
+            <button class="menu-button menu-button--primary" data-action="createTimer">
+                <span data-translate="create_timer" data-translate-category="timer"></span>
+            </button>
+        </div>
     </div>
 </div>

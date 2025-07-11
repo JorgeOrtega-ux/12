@@ -85,13 +85,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="menu-section-bottom">
-                    <button class="menu-button menu-button--primary" data-action="createAlarm">
-                        <span data-translate="create_alarm" data-translate-category="alarms"></span>
-                    </button>
-                </div>
+
             </div>
         </div>
-
+        <div class="menu-section-bottom">
+            <button class="menu-button menu-button--primary" data-action="createAlarm">
+                <span data-translate="create_alarm" data-translate-category="alarms"></span>
+            </button>
+        </div>
     </div>
 </div>

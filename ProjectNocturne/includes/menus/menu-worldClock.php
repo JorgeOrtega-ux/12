@@ -61,12 +61,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="menu-section-bottom">
-                    <button class="menu-button menu-button--primary" data-action="addWorldClock">
-                        <span data-translate="add_clock" data-translate-category="tooltips"></span>
-                    </button>
-                </div>
             </div>
+        </div>
+        <div class="menu-section-bottom">
+            <button class="menu-button menu-button--primary" data-action="addWorldClock">
+                <span data-translate="add_clock" data-translate-category="tooltips"></span>
+            </button>
         </div>
     </div>
 </div>

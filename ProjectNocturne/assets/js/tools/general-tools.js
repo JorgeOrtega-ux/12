@@ -364,70 +364,48 @@ function createSoundMenuItem(sound, actionName, activeSoundId, isCustom) {
     const soundName = isCustom ? sound.nameKey : getTranslation(sound.nameKey, 'sounds');
     const translationAttrs = isCustom ? '' : `data-translate="${sound.nameKey}" data-translate-category="sounds"`;
 
-    const iconDiv = document.createElement('div');
-    iconDiv.className = 'menu-link-icon';
-    iconDiv.innerHTML = `<span class="material-symbols-rounded">${sound.icon}</span>`;
+    // Contenido principal del link (Icono y Texto)
+    menuLink.innerHTML = `
+        <div class="menu-link-icon"><span class="material-symbols-rounded">${sound.icon}</span></div>
+        <div class="menu-link-text"><span ${translationAttrs}>${soundName}</span></div>
+    `;
 
-    const textDiv = document.createElement('div');
-    textDiv.className = 'menu-link-text';
-    textDiv.innerHTML = `<span ${translationAttrs}>${soundName}</span>`;
+    // Contenedor para las acciones
+    const menuContainer = document.createElement('div');
+    menuContainer.className = 'card-menu-container disabled';
 
-    menuLink.appendChild(iconDiv);
-    menuLink.appendChild(textDiv);
+    // Botón de Test (Play/Stop)
+    const testButton = document.createElement('button');
+    // Asignar las clases de estilo correctas
+    testButton.className = 'card-pin-btn sound-test-btn'; 
+    testButton.dataset.action = 'test-sound';
+    const isThisSoundPlaying = (window.getCurrentlyPlayingSoundId && window.getCurrentlyPlayingSoundId() === sound.id);
+    testButton.innerHTML = `<span class="material-symbols-rounded">${isThisSoundPlaying ? 'stop' : 'play_arrow'}</span>`;
+    menuContainer.appendChild(testButton);
 
+    // Botón de Eliminar (solo para audios personalizados)
     if (isCustom) {
-        const testButtonContainer = document.createElement('div');
-        testButtonContainer.className = 'menu-link-icon';
-
-        const testButton = document.createElement('div');
-        testButton.className = 'interactive-icon sound-test-btn';
-        testButton.dataset.action = 'test-sound';
-        testButton.innerHTML = `<span class="material-symbols-rounded">play_arrow</span>`;
-        testButtonContainer.appendChild(testButton);
-
-        const deleteButtonContainer = document.createElement('div');
-        deleteButtonContainer.className = 'menu-link-icon';
-
-        const deleteButton = document.createElement('div');
-        deleteButton.className = 'interactive-icon';
+        const deleteButton = document.createElement('button');
+        // Asignar las clases de estilo correctas
+        deleteButton.className = 'card-pin-btn';
         deleteButton.dataset.action = 'delete-user-audio';
         deleteButton.innerHTML = `<span class="material-symbols-rounded">delete</span>`;
-        deleteButtonContainer.appendChild(deleteButton);
-
-        menuLink.appendChild(deleteButtonContainer);
-        menuLink.appendChild(testButtonContainer);
-
-    } else {
-        menuLink.addEventListener('mouseenter', () => {
-            if (menuLink.querySelector('.menu-link-actions-container')) return;
-
-            const actionsDiv = document.createElement('div');
-            actionsDiv.className = 'menu-link-icon menu-link-actions-container';
-
-            const testButton = document.createElement('div');
-            testButton.className = 'interactive-icon sound-test-btn';
-            testButton.dataset.action = 'test-sound';
-
-            const currentlyPlayingId = window.getCurrentlyPlayingSoundId ? window.getCurrentlyPlayingSoundId() : null;
-            const isThisSoundPlaying = currentlyPlayingId === sound.id;
-
-            const iconName = isThisSoundPlaying ? 'stop' : 'play_arrow';
-            testButton.innerHTML = `<span class="material-symbols-rounded">${iconName}</span>`;
-
-            actionsDiv.appendChild(testButton);
-            menuLink.appendChild(actionsDiv);
-        });
-
-        menuLink.addEventListener('mouseleave', () => {
-            const actionsDiv = menuLink.querySelector('.menu-link-actions-container');
-            const currentlyPlayingId = window.getCurrentlyPlayingSoundId ? window.getCurrentlyPlayingSoundId() : null;
-            const isThisSoundPlaying = currentlyPlayingId === sound.id;
-
-            if (actionsDiv && !isThisSoundPlaying) {
-                actionsDiv.remove();
-            }
-        });
+        menuContainer.appendChild(deleteButton);
     }
+
+    menuLink.appendChild(menuContainer);
+
+    // Lógica para mostrar/ocultar el contenedor al pasar el mouse
+    menuLink.addEventListener('mouseenter', () => {
+        menuContainer.classList.remove('disabled');
+    });
+
+    menuLink.addEventListener('mouseleave', () => {
+        const isCurrentlyPlaying = (window.getCurrentlyPlayingSoundId && window.getCurrentlyPlayingSoundId() === sound.id);
+        if (!isCurrentlyPlaying) {
+            menuContainer.classList.add('disabled');
+        }
+    });
 
     return menuLink;
 }
