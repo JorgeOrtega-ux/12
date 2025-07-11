@@ -23,10 +23,20 @@
             <div class="creation-wrapper active">
                 <div class="creation-content">
                     <div class="menu-section-center overflow-y">
-                        <div id="upload-audio-wrapper"></div>
+                        <div id="upload-audio-wrapper" style="display: none;"></div>
                         <div id="sound-list-wrapper"></div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="menu-section-bottom">
+            <div class="menu-button-group" style="flex-direction: row; gap: 8px; align-items: center;">
+                <button class="menu-button menu-button--primary" style="flex-grow: 1;" data-action="select-audio">
+                    <span data-translate="select_audio" data-translate-category="sounds">Seleccionar audio</span>
+                </button>
+                <button class="menu-action-button" data-action="upload-audio" data-translate="upload_audio" data-translate-category="sounds" data-translate-target="tooltip">
+                    <span class="material-symbols-rounded">upload</span>
+                </button>
             </div>
         </div>
     </div>
