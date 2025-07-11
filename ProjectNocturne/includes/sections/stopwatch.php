@@ -7,28 +7,32 @@
                         data-action="start"
                         data-translate="play"
                         data-translate-category="tooltips"
-                        data-translate-target="tooltip">
+                        data-translate-target="tooltip"
+                        data-key-icon="Space">
                         <span class="material-symbols-rounded">play_arrow</span>
                     </div>
                     <div class="header-button"
                         data-action="stop"
                         data-translate="stop"
                         data-translate-category="tooltips"
-                        data-translate-target="tooltip">
+                        data-translate-target="tooltip"
+                        data-key-icon="Space">
                         <span class="material-symbols-rounded">pause</span>
                     </div>
                     <div class="header-button"
                         data-action="lap"
                         data-translate="lap"
                         data-translate-category="tooltips"
-                        data-translate-target="tooltip">
+                        data-translate-target="tooltip"
+                        data-key-icon="L">
                         <span class="material-symbols-rounded">skip_next</span>
                     </div>
                     <div class="header-button"
                         data-action="reset"
                         data-translate="reset"
                         data-translate-category="tooltips"
-                        data-translate-target="tooltip">
+                        data-translate-target="tooltip"
+                        data-key-icon="R">
                         <span class="material-symbols-rounded">refresh</span>
                     </div>
                 </div>
@@ -40,7 +44,8 @@
                     data-action="change-format"
                     data-translate="change_format"
                     data-translate-category="tooltips"
-                    data-translate-target="tooltip">
+                    data-translate-target="tooltip"
+                    data-key-icon="Ctrl+C">
                     <span class="material-symbols-rounded">timer_10_select</span>
                 </div>
 
@@ -48,7 +53,8 @@
                     data-action="export-laps"
                     data-translate="export_laps"
                     data-translate-category="tooltips"
-                    data-translate-target="tooltip">
+                    data-translate-target="tooltip"
+                    data-key-icon="Ctrl+E">
                     <span class="material-symbols-rounded">download</span>
                 </div>
                 <div class="separator"></div>

@@ -847,7 +847,15 @@ export function initializeCentralizedFontManager() {
         const element = clockElements[sectionName];
         const display = fontSizeDisplays[sectionName];
         if (!container || !element || !display) return;
+        
+        // CORRECCIÓN: Evitar cálculos si el contenedor está oculto
+        if (container.offsetWidth === 0) {
+            return;
+        }
+
         const baseSize = calculateBaseFontSize(container.offsetWidth);
+        if (baseSize === 0) return; // Evitar división por cero
+
         const calculatedSize = baseSize * globalScaleFactor;
         const finalSize = roundToEvenNumber(calculatedSize);
         element.style.fontSize = finalSize + 'px';
@@ -893,10 +901,12 @@ export function initializeCentralizedFontManager() {
             const container = clockContainers[sectionName];
             if (container) {
                 const baseSize = calculateBaseFontSize(container.offsetWidth);
-                globalScaleFactor = targetSize / baseSize;
-                adjustAndApplyFontSizeToAllSections();
-                saveFontScaleToStorage();
-                return true;
+                if (baseSize > 0) { // Evitar división por cero
+                    globalScaleFactor = targetSize / baseSize;
+                    adjustAndApplyFontSizeToAllSections();
+                    saveFontScaleToStorage();
+                    return true;
+                }
             }
         }
         return false;
@@ -908,10 +918,12 @@ export function initializeCentralizedFontManager() {
             const container = clockContainers[sectionName];
             if (container) {
                 const baseSize = calculateBaseFontSize(container.offsetWidth);
-                globalScaleFactor = targetSize / baseSize;
-                adjustAndApplyFontSizeToAllSections();
-                saveFontScaleToStorage();
-                return true;
+                 if (baseSize > 0) { // Evitar división por cero
+                    globalScaleFactor = targetSize / baseSize;
+                    adjustAndApplyFontSizeToAllSections();
+                    saveFontScaleToStorage();
+                    return true;
+                }
             }
         }
         return false;

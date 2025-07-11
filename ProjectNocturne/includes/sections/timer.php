@@ -7,28 +7,32 @@
                         data-action="start-pinned-timer"
                         data-translate="play"
                         data-translate-category="tooltips"
-                        data-translate-target="tooltip">
+                        data-translate-target="tooltip"
+                        data-key-icon="Space">
                         <span class="material-symbols-rounded">play_arrow</span>
                     </div>
                     <div class="header-button"
                         data-action="pause-pinned-timer"
                         data-translate="pause"
                         data-translate-category="tooltips"
-                        data-translate-target="tooltip">
+                        data-translate-target="tooltip"
+                        data-key-icon="Space">
                         <span class="material-symbols-rounded">pause</span>
                     </div>
                     <div class="header-button"
                         data-action="reset-pinned-timer"
                         data-translate="reset"
                         data-translate-category="tooltips"
-                        data-translate-target="tooltip">
+                        data-translate-target="tooltip"
+                        data-key-icon="R">
                         <span class="material-symbols-rounded">refresh</span>
                     </div>
                     <div class="header-button"
                         data-module="toggleMenuTimer"
                         data-translate="add_timer"
                         data-translate-category="tooltips"
-                        data-translate-target="tooltip">
+                        data-translate-target="tooltip"
+                        data-key-icon="N">
                         <span class="material-symbols-rounded">add</span>
                     </div>
                     <div class="info-tool" data-timer-name-display></div>

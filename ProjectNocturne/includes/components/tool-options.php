@@ -4,14 +4,16 @@
             <div class="increse-font-zise-left"
                 data-translate="remove"
                 data-translate-category="tooltips"
-                data-translate-target="tooltip">
+                data-translate-target="tooltip"
+                data-key-icon="Ctrl+-">
                 <span class="material-symbols-rounded">remove</span>
             </div>
             <div class="increse-font-zise-center">--</div>
             <div class="increse-font-zise-right"
                 data-translate="add"
                 data-translate-category="tooltips"
-                data-translate-target="tooltip">
+                data-translate-target="tooltip"
+                data-key-icon="Ctrl++">
                 <span class="material-symbols-rounded">add</span>
             </div>
         </div>
@@ -19,21 +21,24 @@
             data-module="togglePaletteColors"
             data-translate="color"
             data-translate-category="tooltips"
-            data-translate-target="tooltip">
+            data-translate-target="tooltip"
+            data-key-icon="Ctrl+P">
             <span class="material-symbols-rounded">palette</span>
         </div>
         <div class="header-button"
             data-action="toggleBoldMode"
             data-translate="bold"
             data-translate-category="tooltips"
-            data-translate-target="tooltip">
+            data-translate-target="tooltip"
+            data-key-icon="Ctrl+B">
             <span class="material-symbols-rounded">format_bold</span>
         </div>
         <div class="header-button"
             data-action="toggleItalicMode"
             data-translate="italic"
             data-translate-category="tooltips"
-            data-translate-target="tooltip">
+            data-translate-target="tooltip"
+            data-key-icon="Ctrl+I">
             <span class="material-symbols-rounded">format_italic</span>
         </div>
         <div class="separator"></div>
@@ -41,7 +46,8 @@
             data-action="toggleFullScreen"
             data-translate="fullscreen"
             data-translate-category="tooltips"
-            data-translate-target="tooltip">
+            data-translate-target="tooltip"
+            data-key-icon="Ctrl+F">
             <span class="material-symbols-rounded">fullscreen</span>
         </div>
     </div>

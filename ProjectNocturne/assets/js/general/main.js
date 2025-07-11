@@ -4,14 +4,15 @@ import { activateModule, deactivateAllModules, deactivateModule, getActiveModule
 import { initializeTextStyleManager } from '../tools/general-tools.js';
 import { isGradientColor } from '../components/palette-colors.js';
 import { populateHourSelectionMenu } from './menu-interactions.js';
-import { trackEvent } from '../general/event-tracker.js'; 
+import { trackEvent } from '../general/event-tracker.js';
 
-// ========== GLOBAL TIME FORMAT SETTING ==========
+// ========== GLOBAL SETTINGS ==========
 export let use24HourFormat = true;
-
-// ========== CARD MOVEMENT SETTING ==========
 export let allowCardMovement = true;
+export let keyboardShortcutsEnabled = true; // <--- NUEVA VARIABLE GLOBAL
 
+// ========== KEYBOARD STATE ==========
+const keyState = {};
 
 // ========== MOBILE SIDEBAR MODULE ==========
 
@@ -157,10 +158,7 @@ function activateSection(sectionName, showLog = true) {
         detail: { activeSection: sectionName, view: sectionStates.currentView, states: activeSectionStates }
     });
     
-    // ----- INICIO DE LA MODIFICACIÓN -----
-    // Se registra el evento de visita a la sección.
     trackEvent('section_visit', sectionName);
-    // ----- FIN DE LA MODIFICACIÓN -----
 
     document.dispatchEvent(event);
 }
@@ -181,32 +179,26 @@ function updateSidebarButtons(activeSection) {
 function switchToLegalView(sectionName) {
     sectionStates.currentView = 'legal';
 
-    // Ocultar el div de herramientas y mostrar el de legales
     document.querySelector('.sidebar-tools')?.classList.add('disabled');
     document.querySelector('.sidebar-legal-options')?.classList.remove('disabled');
 
-    // Activar la sección legal correspondiente
     activateSection(sectionName);
 }
 
 function switchToToolsView(showLog = false) {
     sectionStates.currentView = 'tools';
 
-    // Ocultar el div de legales y mostrar el de herramientas
     document.querySelector('.sidebar-legal-options')?.classList.add('disabled');
     document.querySelector('.sidebar-tools')?.classList.remove('disabled');
 
-    // Activar la sección "everything" por defecto
     activateSection('everything', showLog);
 }
 
 function initSectionManagement() {
-    // Event listener para los botones de herramientas (selector corregido)
     document.querySelectorAll('.sidebar-tools .sidebar-button').forEach(button => {
         button.addEventListener('click', () => {
             const sectionName = button.dataset.sectionName;
             if (sectionName) {
-                // Esta lógica ahora solo se aplica a los botones de herramientas
                 if (sectionStates.currentView !== 'tools') {
                     switchToToolsView();
                 }
@@ -215,7 +207,6 @@ function initSectionManagement() {
         });
     });
 
-    // Event listener para los links de políticas en el Control Center (sin cambios)
     document.querySelector('.module-control-center').addEventListener('click', (e) => {
         const legalLink = e.target.closest('[data-action="privacy-policy"], [data-action="terms-conditions"], [data-action="cookies-policy"]');
         if (legalLink) {
@@ -225,7 +216,6 @@ function initSectionManagement() {
         }
     });
 
-    // Event listener para los botones en la barra lateral de políticas (sin cambios)
     document.querySelectorAll('.sidebar-legal-options .sidebar-button').forEach(button => {
         button.addEventListener('click', () => {
             const action = button.dataset.action;
@@ -238,7 +228,6 @@ function initSectionManagement() {
         });
     });
 
-    // Estado inicial (sin log)
     switchToToolsView(false);
 }
 
@@ -265,28 +254,24 @@ export function toggleTimeFormat() {
     use24HourFormat = !use24HourFormat;
     updateTimeFormatInAllSections();
 
-    // Vuelve a poblar el selector de horas si el menú está abierto
     const timePickerMenu = document.querySelector('.menu-timePicker[data-menu="timePicker"]');
     if (timePickerMenu && timePickerMenu.classList.contains('active')) {
         populateHourSelectionMenu();
     }
-    // Dispatch a custom event to notify other modules
     const event = new CustomEvent('timeFormatChanged');
     document.dispatchEvent(event);
 }
 
 function updateTimeFormatInAllSections() {
-    // Aquí llamarías a las funciones de actualización de cada sección
-    if (window.alarmManager && typeof window.alarmManager.renderAllAlarmCards === 'function') {
+    if (window.alarmManager?.renderAllAlarmCards) {
         window.alarmManager.renderAllAlarmCards();
     }
-    if (window.timerManager && typeof window.timerManager.renderAllTimerCards === 'function') {
+    if (window.timerManager?.renderAllTimerCards) {
         window.timerManager.renderAllTimerCards();
     }
-    if (window.worldClockManager && typeof window.worldClockManager.updateExistingCardsTranslations === 'function') {
+    if (window.worldClockManager?.updateExistingCardsTranslations) {
         window.worldClockManager.updateExistingCardsTranslations();
     }
-    // Para el widget principal, la actualización es manejada por su propio intervalo
 }
 
 
@@ -591,6 +576,117 @@ function getAppliedTextStyle() {
         isItalic: localStorage.getItem('textStyle_isItalic') === 'true'
     };
 }
+
+// ========== KEYBOARD SHORTCUTS ==========
+function handleKeyDown(e) {
+    if (!keyboardShortcutsEnabled || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        return;
+    }
+
+    const key = e.key.toLowerCase();
+    const ctrlOrMeta = e.ctrlKey || e.metaKey;
+    const isFontSizeKey = ctrlOrMeta && (key === '+' || key === '-' || key === '=');
+
+    if (keyState[key] && !isFontSizeKey) {
+        return;
+    }
+    keyState[key] = true;
+
+    const activeSectionName = getActiveSection();
+    const activeSectionElement = document.querySelector(`.section-content > .active`);
+    
+    if (!activeSectionElement) return;
+
+    // --- Atajos globales (se aplican a la sección activa) ---
+    if (ctrlOrMeta) {
+        switch (key) {
+            case 'm':
+                e.preventDefault();
+                toggleModule('toggleControlCenter');
+                break;
+            case 'p':
+                e.preventDefault();
+                activeSectionElement.querySelector('[data-module="togglePaletteColors"]')?.click();
+                break;
+            case 'b':
+                e.preventDefault();
+                activeSectionElement.querySelector('[data-action="toggleBoldMode"]')?.click();
+                break;
+            case 'i':
+                e.preventDefault();
+                activeSectionElement.querySelector('[data-action="toggleItalicMode"]')?.click();
+                break;
+            case 'f':
+                e.preventDefault();
+                activeSectionElement.querySelector('[data-action="toggleFullScreen"]')?.click();
+                break;
+            case '+':
+            case '=':
+                e.preventDefault();
+                activeSectionElement.querySelector('.increse-font-zise-right')?.click();
+                break;
+            case '-':
+                e.preventDefault();
+                activeSectionElement.querySelector('.increse-font-zise-left')?.click();
+                break;
+        }
+    }
+
+    // --- Atajos por sección ---
+    switch (activeSectionName) {
+        case 'alarm':
+            if (key === 'a') activeSectionElement.querySelector('[data-module="toggleMenuAlarm"]')?.click();
+            break;
+        case 'timer':
+            if (key === ' ') { 
+                e.preventDefault();
+                const startBtn = activeSectionElement.querySelector('[data-action="start-pinned-timer"]');
+                const pauseBtn = activeSectionElement.querySelector('[data-action="pause-pinned-timer"]');
+                if (startBtn && !startBtn.classList.contains('disabled-interactive')) {
+                    startBtn.click();
+                } else if (pauseBtn && !pauseBtn.classList.contains('disabled-interactive')) {
+                    pauseBtn.click();
+                }
+            }
+            if (key === 'r') activeSectionElement.querySelector('[data-action="reset-pinned-timer"]')?.click();
+            if (key === 'n') activeSectionElement.querySelector('[data-module="toggleMenuTimer"]')?.click();
+            break;
+        case 'stopwatch':
+            if (key === ' ') { 
+                e.preventDefault();
+                const startBtn = activeSectionElement.querySelector('[data-action="start"]');
+                const stopBtn = activeSectionElement.querySelector('[data-action="stop"]');
+                if (startBtn && !startBtn.classList.contains('disabled-interactive')) {
+                    startBtn.click();
+                } else if (stopBtn && !stopBtn.classList.contains('disabled-interactive')) {
+                    stopBtn.click();
+                }
+            }
+            if (key === 'l') activeSectionElement.querySelector('[data-action="lap"]')?.click();
+            if (key === 'r') activeSectionElement.querySelector('[data-action="reset"]')?.click();
+            if (ctrlOrMeta && key === 'c') {
+                e.preventDefault();
+                activeSectionElement.querySelector('[data-action="change-format"]')?.click();
+            }
+            if (ctrlOrMeta && key === 'e') {
+                e.preventDefault();
+                activeSectionElement.querySelector('[data-action="export-laps"]')?.click();
+            }
+            break;
+        case 'worldClock':
+            if (key === 'a') activeSectionElement.querySelector('[data-module="toggleMenuWorldClock"]')?.click();
+            break;
+    }
+}
+
+function handleKeyUp(e) {
+    const key = e.key.toLowerCase();
+    delete keyState[key];
+}
+
+document.addEventListener('keydown', handleKeyDown);
+document.addEventListener('keyup', handleKeyUp);
+
 
 // ========== INITIALIZE TEXT STYLE MANAGER ==========
 document.addEventListener('DOMContentLoaded', initializeTextStyleManager);

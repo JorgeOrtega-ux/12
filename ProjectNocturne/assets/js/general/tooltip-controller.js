@@ -1,4 +1,5 @@
 // ========== OPTIMIZED TOOLTIP SYSTEM - UNIFIED WITH DYNAMIC ELEMENTS FIX ==========
+import { keyboardShortcutsEnabled } from './main.js'; // <--- IMPORTAMOS LA VARIABLE
 
 // ========== SYSTEM CONFIGURATION ==========
 const TOOLTIP_ENABLED = true;
@@ -182,6 +183,8 @@ function getTooltipText(element) {
         }
     }
 
+    let tooltipText = '';
+
     if (element.hasAttribute('data-translate') && element.getAttribute('data-translate-target') === 'tooltip') {
         const translateKey = element.getAttribute('data-translate');
         const translateCategory = element.getAttribute('data-translate-category') || 'tooltips';
@@ -189,16 +192,13 @@ function getTooltipText(element) {
         if (typeof window.getTranslation === 'function') {
             const translatedText = window.getTranslation(translateKey, translateCategory);
             if (translatedText && translatedText !== translateKey) {
-                return translatedText + unavailableText;
+                tooltipText = translatedText;
+            } else {
+                tooltipText = translateKey;
             }
         }
-        const fallbackText = translateKey;
-        return fallbackText + unavailableText;
-    }
-
-    if (element.dataset.tooltip) {
+    } else if (element.dataset.tooltip) {
         const tooltipKey = element.dataset.tooltip;
-        let tooltipText;
         if (typeof window.getTranslation === 'function' && tooltipKey in (window.translations?.tooltips || {})) {
             const translatedText = window.getTranslation(tooltipKey, 'tooltips');
             if (translatedText && translatedText !== tooltipKey) {
@@ -209,21 +209,22 @@ function getTooltipText(element) {
         } else {
             tooltipText = tooltipTextMap[tooltipKey] || tooltipKey;
         }
-
-        return tooltipText + unavailableText;
+    } else if (element.dataset.originalTitle) {
+        tooltipText = element.dataset.originalTitle;
+    } else if (element.title) {
+        tooltipText = element.title;
+    } else {
+        return null;
     }
+    
+    tooltipText += unavailableText;
 
-    if (element.dataset.originalTitle) {
-        const originalTitle = element.dataset.originalTitle;
-        return originalTitle + unavailableText;
+    const keyIcon = element.getAttribute('data-key-icon');
+    if (keyboardShortcutsEnabled && keyIcon) {
+        return `<div class="tooltip-text">${tooltipText}</div><div class="tooltip-shortcut"><kbd>${keyIcon}</kbd></div>`;
     }
-
-    if (element.title) {
-        const title = element.title;
-        return title + unavailableText;
-    }
-
-    return null;
+    
+    return tooltipText;
 }
 
 function isColorBlockedForTheme(element) {
@@ -291,9 +292,15 @@ function showTooltip(element) {
     tooltip = document.createElement('div');
     tooltip.id = 'tooltip';
     tooltip.className = 'tooltip';
+
+    const keyIcon = element.getAttribute('data-key-icon');
+    if (keyboardShortcutsEnabled && keyIcon) {
+        tooltip.classList.add('tooltip--with-shortcut');
+    }
+
     document.body.appendChild(tooltip);
 
-    tooltip.textContent = tooltipText;
+    tooltip.innerHTML = tooltipText; 
     tooltip.style.display = 'block';
 
     const bestPlacement = detectBestPlacement(element);

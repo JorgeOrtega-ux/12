@@ -7,7 +7,8 @@
                         data-module="toggleMenuWorldClock"
                         data-translate="add_clock"
                         data-translate-category="tooltips"
-                        data-translate-target="tooltip">
+                        data-translate-target="tooltip"
+                        data-key-icon="A">
                         <span class="material-symbols-rounded">add</span>
                     </div>
                     <div class="info-tool" data-timezone-worldclock></div>

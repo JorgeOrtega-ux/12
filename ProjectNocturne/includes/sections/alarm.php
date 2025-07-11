@@ -7,7 +7,8 @@
                         data-module="toggleMenuAlarm"
                         data-translate="add_alarm"
                         data-translate-category="tooltips"
-                        data-translate-target="tooltip">
+                        data-translate-target="tooltip"
+                        data-key-icon="A">
                         <span class="material-symbols-rounded">add_alarm</span>
                     </div>
                     <div class="info-tool" data-timezone-alarm></div>
