@@ -559,7 +559,9 @@ function addSearchItemEventListeners(item) {
         if (action === 'toggle-item-menu') {
             const dropdown = item.querySelector('.card-dropdown-menu');
             const isOpening = dropdown.classList.contains('disabled');
-            document.querySelectorAll('.alarm-search-results-wrapper .card-dropdown-menu').forEach(d => {
+            // ***** INICIO DE LA CORRECCIÓN *****
+            document.querySelectorAll('.search-results-wrapper .card-dropdown-menu').forEach(d => {
+            // ***** FIN DE LA CORRECCIÓN *****
                 if (d !== dropdown) {
                     d.classList.add('disabled');
                 }
@@ -577,6 +579,7 @@ function addSearchItemEventListeners(item) {
         }
     });
 }
+
 
 function refreshSearchResults() {
     const searchInput = document.getElementById('alarm-search-input');
