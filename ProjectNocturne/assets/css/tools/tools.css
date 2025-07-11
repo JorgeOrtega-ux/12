@@ -1318,10 +1318,12 @@
     display: flex;
     right: 12px;
 }
+
 #suggestion-form {
     width: 100%;
     height: 100%;
 }
+
 .add-btn {
     width: 40px;
     height: 40px;
@@ -1333,6 +1335,7 @@
     justify-content: center;
     align-items: center;
 }
+
 /* ====================================== */
 /* ===== LEGAL CONTENT STYLES ===== */
 /* ====================================== */
@@ -1359,20 +1362,22 @@
     padding-bottom: 8px;
     border-bottom: 1px solid #eee;
 }
+
 .feedback-text {
     width: 100%;
     padding: 8px;
-    height: 120px;
-    border: 1px solid #00000020;
+    height: 100%;
     background-color: transparent;
-    resize: none;
+    border: none;
     border-radius: 8px;
+    resize: none;
 }
 
 #feedback-form {
     width: 100%;
     height: 100%;
 }
+
 .section-legal-content p,
 .section-legal-content ul {
     margin-bottom: 16px;
@@ -1413,6 +1418,7 @@
 .dark-mode .section-legal-content .legal-link {
     color: #58a6ff;
 }
+
 .add-btn:hover {
     background-color: #f5f5fa;
 }
@@ -1585,6 +1591,19 @@
 
 .custom-select-content.input-error {
     border-color: #d32f2f;
+}
+
+.custom-text-content {
+    width: 100%;
+    height: 120px;
+    border: 1px solid #00000020;
+        border-radius: 8px;
+
+}
+
+.custom-text-content.input-error {
+    border-color: #d32f2f;
+    
 }
 
 .custom-select-wrapper--row {

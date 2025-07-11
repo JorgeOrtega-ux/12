@@ -1435,13 +1435,17 @@ function initializeFeedbackForm() {
 
     feedbackForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        
+
         const submitButton = feedbackForm.querySelector('button[type="submit"]');
         const messageInput = feedbackForm.querySelector('#feedback-text');
         const emailInput = feedbackForm.querySelector('#feedback-email');
         const typeInput = feedbackForm.querySelector('#feedback-type-value');
 
         let isValid = true;
+
+        // Se valida que el textarea no esté vacío.
+        // La función validateField apunta a messageInput.parentElement,
+        // que ahora es el div .custom-text-content.
         if (messageInput.value.trim() === '') {
             validateField(messageInput.parentElement, false);
             isValid = false;
@@ -1449,6 +1453,7 @@ function initializeFeedbackForm() {
             validateField(messageInput.parentElement, true);
         }
 
+        // Se valida que el email no esté vacío y tenga un formato válido.
         if (emailInput.value.trim() === '' || !/^\S+@\S+\.\S+$/.test(emailInput.value)) {
             validateField(emailInput.parentElement, false);
             isValid = false;
@@ -1474,14 +1479,14 @@ function initializeFeedbackForm() {
             if (result.success) {
                 showDynamicIslandNotification('system', 'success', result.message || 'Comentario enviado con éxito.', 'notifications');
                 feedbackForm.reset();
-                
+
                 const typeDisplay = document.getElementById('feedback-type-display');
                 if (typeDisplay) {
                     typeDisplay.setAttribute('data-translate', 'feedback_type_improvement');
                     typeDisplay.textContent = getTranslation('feedback_type_improvement', 'menu');
                     typeInput.value = 'improvement';
                 }
-                
+
                 deactivateModule('toggleFeedbackMenu');
             } else {
                 showDynamicIslandNotification('system', 'error', result.message || 'Ocurrió un error.', 'notifications');
