@@ -446,12 +446,15 @@ function renderAlarmSearchResults(searchTerm) {
 
     const resultsWrapper = menuElement.querySelector('.search-results-wrapper');
     const creationWrapper = menuElement.querySelector('.creation-wrapper');
+    const menuBottom = menuElement.querySelector('.menu-section-bottom'); // <- Elemento añadido
 
-    if (!resultsWrapper || !creationWrapper) return;
+    // Se añade la verificación para menuBottom
+    if (!resultsWrapper || !creationWrapper || !menuBottom) return;
 
     if (!searchTerm) {
         resultsWrapper.classList.add('disabled');
         creationWrapper.classList.remove('disabled');
+        menuBottom.classList.remove('disabled');
         resultsWrapper.innerHTML = '';
         return;
     }
@@ -464,6 +467,8 @@ function renderAlarmSearchResults(searchTerm) {
 
     creationWrapper.classList.add('disabled');
     resultsWrapper.classList.remove('disabled');
+    menuBottom.classList.add('disabled');
+
     resultsWrapper.innerHTML = '';
 
     if (filteredAlarms.length > 0) {

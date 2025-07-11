@@ -676,13 +676,15 @@ function renderTimerSearchResults(searchTerm) {
     const resultsWrapper = menuElement.querySelector('.search-results-wrapper');
     const creationWrapper = menuElement.querySelector('.creation-wrapper');
     const typeSelector = menuElement.querySelector('.menu-section-selector');
+    const menuBottom = menuElement.querySelector('.menu-section-bottom');
 
-    if (!resultsWrapper || !creationWrapper || !typeSelector) return;
+    if (!resultsWrapper || !creationWrapper || !typeSelector || !menuBottom) return;
 
     if (!searchTerm) {
         resultsWrapper.classList.add('disabled');
         creationWrapper.classList.remove('disabled');
         typeSelector.classList.remove('disabled');
+        menuBottom.classList.remove('disabled');
         resultsWrapper.innerHTML = '';
         return;
     }
@@ -696,6 +698,7 @@ function renderTimerSearchResults(searchTerm) {
     creationWrapper.classList.add('disabled');
     typeSelector.classList.add('disabled');
     resultsWrapper.classList.remove('disabled');
+    menuBottom.classList.add('disabled');
     resultsWrapper.innerHTML = '';
 
     if (filteredTimers.length > 0) {

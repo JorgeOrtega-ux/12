@@ -14,19 +14,19 @@ let userClocks = [];
 let mainDisplayInterval = null;
 
 function renderWorldClockSearchResults(searchTerm) {
-    // ================== INICIO DEL CÓDIGO CORREGIDO ==================
     const menuElement = document.querySelector('.menu-worldClock[data-menu="worldClock"]');
-    // =================== FIN DEL CÓDIGO CORREGIDO ====================
     if (!menuElement) return;
 
     const resultsWrapper = menuElement.querySelector('.search-results-wrapper');
     const creationWrapper = menuElement.querySelector('.creation-wrapper');
+    const menuBottom = menuElement.querySelector('.menu-section-bottom');
 
-    if (!resultsWrapper || !creationWrapper) return;
+    if (!resultsWrapper || !creationWrapper || !menuBottom) return;
 
     if (!searchTerm) {
         resultsWrapper.classList.add('disabled');
         creationWrapper.classList.remove('disabled');
+        menuBottom.classList.remove('disabled');
         resultsWrapper.innerHTML = '';
         return;
     }
@@ -35,6 +35,7 @@ function renderWorldClockSearchResults(searchTerm) {
     );
     creationWrapper.classList.add('disabled');
     resultsWrapper.classList.remove('disabled');
+    menuBottom.classList.add('disabled');
     resultsWrapper.innerHTML = '';
     if (filteredClocks.length > 0) {
         const list = document.createElement('div');
