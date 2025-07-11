@@ -133,7 +133,7 @@ function translateElementsWithDataTranslate(parentElement = document.body) {
 
         switch (translateTarget) {
             case 'text':
-                element.textContent = translatedText;
+                element.innerHTML = translatedText; // <-- CORRECCIÓN CLAVE
                 break;
             case 'tooltip':
                 break;
@@ -147,7 +147,7 @@ function translateElementsWithDataTranslate(parentElement = document.body) {
                 element.setAttribute('aria-label', translatedText);
                 break;
             default:
-                element.textContent = translatedText;
+                element.innerHTML = translatedText; // <-- CORRECCIÓN CLAVE
         }
     });
 }

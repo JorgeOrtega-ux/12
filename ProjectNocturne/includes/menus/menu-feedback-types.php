@@ -27,6 +27,10 @@
                         <div class="menu-link-icon"><span class="material-symbols-rounded">bug_report</span></div>
                         <div class="menu-link-text"><span data-translate="feedback_type_bug" data-translate-category="menu"></span></div>
                     </div>
+                    <div class="menu-link" data-action="select-feedback-type" data-value="contact_support" role="option" tabindex="0">
+                        <div class="menu-link-icon"><span class="material-symbols-rounded">support_agent</span></div>
+                        <div class="menu-link-text"><span data-translate="feedback_type_contact_support" data-translate-category="menu"></span></div>
+                    </div>
                     <div class="menu-link" data-action="select-feedback-type" data-value="feature_request" role="option" tabindex="0">
                         <div class="menu-link-icon"><span class="material-symbols-rounded">star</span></div>
                         <div class="menu-link-text"><span data-translate="feedback_type_feature" data-translate-category="menu"></span></div>

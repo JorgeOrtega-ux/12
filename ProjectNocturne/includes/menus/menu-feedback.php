@@ -42,10 +42,10 @@
                                     </div>
                                 </div>
                                 <div class="menu-content-general">
-                                    <input type="hidden" name="feedback_type" id="feedback-type-value" value="improvement">
+                                    <input type="hidden" name="feedback_type" id="feedback-type-value" value="contact_support">
                                     <div class="custom-select-content" data-action="open-feedback-types-menu" role="button" tabindex="0">
                                         <div class="custom-select-content-left">
-                                            <span id="feedback-type-display" data-translate="feedback_type_improvement" data-translate-category="menu"></span>
+                                            <span id="feedback-type-display" data-translate="feedback_type_contact_support" data-translate-category="menu"></span>
                                         </div>
                                         <div class="custom-select-content-right">
                                             <span class="material-symbols-rounded">arrow_right</span>

@@ -1361,6 +1361,7 @@
 }
 .feedback-text {
     width: 100%;
+    padding: 8px;
     height: 120px;
     border: 1px solid #00000020;
     background-color: transparent;
