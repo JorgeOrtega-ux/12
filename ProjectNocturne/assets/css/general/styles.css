@@ -467,18 +467,17 @@ body {
 
 .menu-section-center {
     display: flex;
-    flex: 0 0 auto;
     flex-direction: column;
     padding: 8px;
     gap: 8px;
-    overflow: auto;
+    overflow-y: auto; /* Asegura el scroll vertical si es necesario */
+    flex-grow: 1; /* ¡Esta es la clave! Hace que esta sección ocupe todo el espacio disponible */
 }
 
 .creation-wrapper {
     display: flex;
     flex-direction: column;
     height: 100%;
-    justify-content: space-between;
 }
 
 .menu-section-bottom {
