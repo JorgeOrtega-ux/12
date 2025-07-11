@@ -7,16 +7,27 @@
         Le extendemos la más cordial bienvenida a ProjectNocturne (en adelante, "la Plataforma" o "el Servicio"). Nuestra principal vocación es ofrecer un ecosistema de herramientas digitales de alta productividad, diseñadas para ser potentes, intuitivas y profundamente personalizables. Entendemos que la relación con nuestros usuarios se cimienta sobre la base de la confianza, y por ello, nuestro compromiso con la protección, la seguridad y la transparencia en el tratamiento de los datos es un pilar fundamental e irrenunciable de nuestra operación.
     </p>
     <p>
+        <strong>Aceptación de la Política:</strong> Al utilizar este sitio web, usted declara que ha leído, comprendido y aceptado los términos y condiciones establecidos en esta Política de Privacidad. Si no está de acuerdo con alguno de los puntos aquí expuestos, le solicitamos que se abstenga de utilizar nuestros servicios.
+    </p>
+    <p>
         La presente Política de Privacidad ha sido concebida para ser un documento exhaustivo y accesible. Su objetivo es proporcionar una visión clara y sin ambigüedades sobre cada categoría de datos que recopilamos, los fines específicos y legítimos para los cuales estos son procesados, las tecnologías subyacentes que facilitan la prestación de nuestros servicios y, de manera crucial, los derechos inalienables que usted, como titular de sus datos, posee y puede ejercer. El uso y la interacción continuada con la Plataforma suponen la lectura, comprensión y aceptación de las prácticas operativas aquí descritas.
     </p>
 
     <h2>2. Definiciones Clave</h2>
-    <p>Para garantizar una comprensión unívoca de este documento, se establecen las siguientes definiciones:</p>
+    <p>Para garantizar una comprensión unívoca y precisa de este documento, es fundamental establecer las siguientes definiciones que serán utilizadas a lo largo de esta política:</p>
     <ul>
-        <li><strong>Datos Personales:</strong> Cualquier información que, por sí sola o en conjunto con otra, pueda identificar a una persona física. En el contexto de ProjectNocturne, esto se limita a la dirección de correo electrónico proporcionada voluntariamente por el usuario.</li>
-        <li><strong>Datos de Uso y Telemetría:</strong> Información recopilada de forma automática durante el uso de la Plataforma, que no permite la identificación personal directa del usuario. Incluye el identificador de sesión anónimo (UUID), eventos de interacción y metadatos técnicos.</li>
-        <li><strong>Usuario:</strong> Toda persona que accede y/o utiliza la Plataforma ProjectNocturne.</li>
-        <li><strong>Responsable del Tratamiento:</strong> La entidad que determina los fines y medios del tratamiento de los datos; en este caso, ProjectNocturne.</li>
+        <li>
+            <strong>Datos Personales:</strong> Se refiere a cualquier pieza de información que, ya sea por sí sola o en combinación con otros datos disponibles, permita identificar de manera directa o indirecta a una persona física. En el contexto específico de ProjectNocturne, y en estricta aplicación del principio de minimización, el único dato personal que podríamos llegar a tratar es su <strong>dirección de correo electrónico</strong>, y esto ocurre únicamente cuando usted decide proporcionárnosla de forma voluntaria a través de nuestros formularios de contacto o sugerencias.
+        </li>
+        <li>
+            <strong>Datos de Uso y Telemetría:</strong> Corresponde a toda la información que se genera y recopila de forma automática durante su interacción con la Plataforma. Es importante destacar que estos datos son de naturaleza anónima y no están vinculados a su identidad personal. Incluyen, entre otros, el <strong>identificador de sesión anónimo (UUID)</strong> para distinguir sesiones de uso sin identificar al usuario, <strong>eventos de interacción</strong> (como clics en funciones específicas) para análisis de usabilidad, y <strong>metadatos técnicos</strong> como el tipo de navegador, sistema operativo y país de origen, con el fin de optimizar la compatibilidad y el rendimiento.
+        </li>
+        <li>
+            <strong>Usuario:</strong> Es toda persona física que, de manera libre y voluntaria, accede, navega o utiliza cualquiera de las herramientas y funcionalidades ofrecidas por la Plataforma ProjectNocturne a través de su dominio web.
+        </li>
+        <li>
+            <strong>Responsable del Tratamiento:</strong> Es la entidad que, sola o en conjunto con otras, toma las decisiones fundamentales sobre el tratamiento de los datos personales, incluyendo la determinación de los fines (el "para qué") y los medios (el "cómo"). Para todos los efectos legales y prácticos, <strong>ProjectNocturne</strong> es el único y final Responsable del Tratamiento de los datos cubiertos por esta política.
+        </li>
     </ul>
 
     <h2>3. Identificación y Rol del Responsable del Tratamiento de Datos</h2>
@@ -32,13 +43,21 @@
     
     <h2>4. Principios Rectores del Tratamiento de Datos</h2>
     <p>
-        Nuestro marco operativo y ético en materia de privacidad se adhiere estrictamente a los siguientes principios, asegurando un tratamiento de datos justo, transparente y conforme a las mejores prácticas internacionales:
+        Nuestro compromiso con su privacidad es absoluto. Por ello, todas nuestras actividades de tratamiento de datos se rigen por los siguientes principios fundamentales, los cuales constituyen el pilar de nuestro marco ético y operativo, asegurando un manejo de la información justo, transparente y alineado con las mejores prácticas internacionales:
     </p>
     <ul>
-        <li><strong>Licitud, Lealtad y Transparencia:</strong> Todo tratamiento de datos se realiza sobre bases legales sólidas, de manera justa y con total transparencia hacia usted, nuestro usuario.</li>
-        <li><strong>Limitación de la Finalidad:</strong> Los datos son recopilados para los fines explícitos y legítimos detallados en esta política y no serán tratados de manera incompatible con dichos propósitos.</li>
-        <li><strong>Minimización de Datos:</strong> Practicamos una política de "privacidad por diseño", recopilando únicamente los datos estrictamente necesarios, adecuados y pertinentes para cada finalidad específica.</li>
-        <li><strong>Integridad y Confidencialidad:</strong> Implementamos medidas de seguridad técnicas y organizativas de vanguardia para proteger los datos contra el tratamiento no autorizado, la pérdida, la destrucción o el daño accidental.</li>
+        <li>
+            <strong>Licitud, Lealtad y Transparencia:</strong> Todo tratamiento de datos que realizamos se fundamenta en una base legal sólida y claramente definida en esta política. Actuamos con la máxima lealtad hacia nuestros usuarios, lo que significa que nunca trataremos sus datos de formas que no esperaría razonablemente. La transparencia es clave: le informamos de manera clara y accesible sobre qué datos recopilamos y para qué los utilizamos.
+        </li>
+        <li>
+            <strong>Limitación de la Finalidad:</strong> Los datos que recopilamos son utilizados única y exclusivamente para los fines explícitos y legítimos que se detallan en el apartado 6 de esta política. Nos comprometemos a no tratar sus datos para propósitos ulteriores que sean incompatibles con aquellos para los que fueron inicialmente recogidos, garantizando así que la información se utiliza de manera predecible y respetuosa.
+        </li>
+        <li>
+            <strong>Minimización de Datos:</strong> Adoptamos un enfoque de "privacidad por diseño y por defecto". Esto significa que solo recopilamos la cantidad mínima de información estrictamente necesaria, adecuada y pertinente para cumplir con cada finalidad específica. No solicitamos ni recopilamos datos que no sean indispensables para el funcionamiento y la mejora de la Plataforma.
+        </li>
+        <li>
+            <strong>Integridad y Confidencialidad:</strong> La seguridad de sus datos es una prioridad crítica. Implementamos y mantenemos un conjunto robusto de medidas de seguridad técnicas y organizativas, como el cifrado de comunicaciones y controles de acceso estrictos, para proteger toda la información contra el tratamiento no autorizado o ilícito, así como contra su pérdida, destrucción o daño accidental.
+        </li>
     </ul>
 
     <h2>5. Tipos de Datos Recopilados y Canales de Obtención</h2>
@@ -78,7 +97,7 @@
             <strong>Identificador Único de Sesión (UUID):</strong> Asignamos un identificador anónimo a su navegador (`user-unique-id`) para agrupar métricas de uso sin recopilar información personal.
         </li>
         <li>
-            <strong>Telemetría de Eventos:</strong> Registramos interacciones anónimas clave como "crear_alarma", "iniciar_temporizador", o "exportar_vueltas". Estos datos son cruciales para nuestro análisis de usabilidad.
+            <strong>Telemetría de Eventos:</strong> Registramos interacciones anónimas clave con las funcionalidades de la plataforma. Estos datos son cruciales para nuestro análisis de usabilidad y para entender qué herramientas son más valoradas por nuestros usuarios.
         </li>
         <li>
             <strong>Datos Técnicos y Geográficos:</strong> Detectamos su <strong>país</strong> de origen (sin almacenar su IP), <strong>sistema operativo</strong>, y <strong>navegador web</strong> para optimizar la compatibilidad y la experiencia.
@@ -87,42 +106,66 @@
 
     <h2>6. Finalidades Detalladas del Tratamiento de Datos</h2>
     <p>
-        El tratamiento de cada categoría de datos persigue objetivos claros y definidos para la mejora del servicio:
+        El tratamiento de cada categoría de datos persigue objetivos claros, definidos y legítimos, orientados exclusivamente a la prestación y mejora continua de nuestros servicios. A continuación, se detallan estas finalidades:
     </p>
     <ul>
-        <li><strong>Para la Operación y Mantenimiento del Servicio:</strong> El almacenamiento local es esencial para que las herramientas retengan su configuración y funcionen como se espera entre sesiones.</li>
-        <li><strong>Para la Mejora Continua y el Análisis Estratégico:</strong> La telemetría anónima nos proporciona insights agregados para identificar patrones de uso, optimizar flujos de trabajo y guiar el desarrollo de futuras funcionalidades.</li>
-        <li><strong>Para la Gestión de Comunicaciones y Soporte al Usuario:</strong> Los datos del formulario de sugerencias se utilizan exclusivamente para procesar y responder a sus comunicaciones.</li>
-        <li><strong>Para la Personalización de la Experiencia de Usuario:</strong> La detección del idioma y la personalización del tema y la fuente están diseñadas para que la Plataforma se sienta intuitiva y adaptada a sus preferencias.</li>
+        <li>
+            <strong>Para la Operación y Mantenimiento del Servicio:</strong> El almacenamiento local de sus configuraciones y preferencias es fundamental para la funcionalidad principal de la Plataforma. Sin esta capacidad, sus alarmas personalizadas, temporizadores, relojes mundiales y preferencias de diseño (tema, color, fuente) se perderían cada vez que cierre o actualice la página. Esta finalidad es, por tanto, esencial para ofrecerle una experiencia de usuario coherente, persistente y verdaderamente personalizada, que es el núcleo de nuestra propuesta de valor.
+        </li>
+        <li>
+            <strong>Para la Mejora Continua y el Análisis Estratégico:</strong> La recopilación de telemetría y datos de uso anónimos es una herramienta vital para la evolución de ProjectNocturne. Estos datos agregados nos permiten entender cómo interactúan los usuarios con las diferentes herramientas, cuáles son las funciones más utilizadas y dónde pueden existir puntos de fricción o dificultad. Este análisis cuantitativo guía nuestras decisiones de desarrollo, nos ayuda a priorizar nuevas funcionalidades, a optimizar los flujos de trabajo existentes y a garantizar que nuestros recursos se inviertan en las áreas que aportan mayor valor a nuestra comunidad de usuarios.
+        </li>
+        <li>
+            <strong>Para la Gestión de Comunicaciones y Soporte al Usuario:</strong> Cuando usted nos envía sus comentarios, sugerencias o informes de errores a través del formulario de contacto, utilizamos la información proporcionada (su correo electrónico y el contenido de su mensaje) con el único propósito de gestionar esa comunicación. Esto incluye procesar su solicitud, investigar el problema reportado, responder a sus preguntas y, en general, proporcionarle el soporte que necesita. No utilizaremos su correo electrónico para fines de marketing no solicitados.
+        </li>
+        <li>
+            <strong>Para la Personalización de la Experiencia de Usuario:</strong> Más allá de las configuraciones que usted guarda activamente, la Plataforma realiza una detección inicial de factores como el idioma de su navegador y las preferencias de tema de su sistema operativo. Esta información se utiliza para configurar automáticamente la interfaz a un estado inicial que le resulte familiar y cómodo desde el primer momento, reduciendo la necesidad de ajustes manuales y haciendo que la Plataforma se sienta más intuitiva y adaptada a su entorno digital.
+        </li>
     </ul>
     
     <h2>7. Base Jurídica para el Tratamiento</h2>
     <p>
-        El tratamiento de sus datos se fundamenta en las siguientes bases legales:
+        Todo tratamiento de datos que realizamos en ProjectNocturne se apoya en una base jurídica sólida y transparente, de conformidad con las principales normativas de protección de datos, como el Reglamento General de Protección de Datos (RGPD) de la Unión Europea. Las bases legales que legitiman nuestras actividades de tratamiento son las siguientes:
     </p>
     <ul>
-        <li><strong>Su Consentimiento Explícito:</strong> Otorgado al aceptar esta política y al utilizar voluntariamente funciones como el formulario de sugerencias.</li>
-        <li><strong>Nuestro Interés Legítimo:</strong> Para la mejora y optimización de nuestro servicio a través del análisis de datos de uso anónimos.</li>
+        <li>
+            <strong>Su Consentimiento Explícito:</strong> Para ciertas actividades de tratamiento, nuestra legitimidad se basa en el consentimiento que usted nos otorga de manera libre, específica, informada e inequívoca. Este es el caso cuando usted decide voluntariamente utilizar nuestro formulario de sugerencias y nos proporciona su dirección de correo electrónico para que podamos responderle. Asimismo, al aceptar nuestra política de cookies y privacidad al utilizar el servicio, está consintiendo las prácticas aquí descritas. Usted tiene el derecho de retirar su consentimiento en cualquier momento, sin que ello afecte a la licitud del tratamiento basado en el consentimiento previo a su retirada.
+        </li>
+        <li>
+            <strong>Nuestro Interés Legítimo:</strong> Para otras actividades, la base jurídica es nuestro interés legítimo como empresa para operar y mejorar nuestro servicio. Esto se aplica específicamente a la recopilación de datos de uso y telemetría anónimos. Nuestro interés legítimo consiste en comprender cómo se utiliza nuestra Plataforma para poder mejorarla, solucionar errores y tomar decisiones estratégicas sobre su desarrollo futuro. Hemos realizado una ponderación para asegurar que este interés no prevalezca sobre sus derechos y libertades fundamentales, especialmente porque los datos se procesan de forma anónima y no permiten su identificación personal.
+        </li>
     </ul>
     
     <h2>8. Política de Retención y Eliminación de Datos</h2>
     <p>
-        Nuestra política de retención distingue claramente entre los datos almacenados en su dispositivo y los que se encuentran en nuestros servidores:
+        En ProjectNocturne, aplicamos una política de retención de datos diferenciada y transparente, diseñada para darle el máximo control sobre su información y para asegurar que no almacenamos datos más allá de lo estrictamente necesario.
     </p>
     <ul>
-        <li><strong>Datos Locales (`localStorage` e `IndexedDB`):</strong> Usted tiene el control total. Estos datos permanecen en su navegador hasta que decida eliminarlos explícitamente a través de las herramientas de limpieza de su navegador.</li>
-        <li><strong>Datos del Servidor (Sugerencias y Telemetría):</strong> Los datos de sugerencias (incluido su correo electrónico) y la telemetría anónima se conservan en nuestros servidores por un período estrictamente necesario para cumplir con los fines para los que fueron recopilados, o según lo exija la ley aplicable, tras lo cual son eliminados de forma segura.</li>
+        <li>
+            <strong>Datos Locales (`localStorage` e `IndexedDB`):</strong> Esta categoría de datos, que incluye todas sus configuraciones de herramientas y preferencias de interfaz, reside exclusivamente en su dispositivo, dentro del almacenamiento seguro de su navegador web. <strong>Usted tiene el control total y absoluto sobre estos datos.</strong> Permanecen en su dispositivo de forma indefinida para garantizar la persistencia de su experiencia personalizada cada vez que visita la Plataforma. La eliminación de estos datos está completamente en sus manos y puede realizarse en cualquier momento a través de las herramientas de limpieza de datos de navegación que ofrece su navegador (como "Borrar datos de navegación", "Limpiar historial" o similar).
+        </li>
+        <li>
+            <strong>Datos del Servidor (Sugerencias y Telemetría):</strong> La información que se transmite a nuestros servidores, como los datos de su formulario de sugerencias (incluido su correo electrónico) y la telemetría de uso anónima, sigue un ciclo de vida definido. Estos datos se conservan únicamente durante el período de tiempo indispensable para cumplir con la finalidad para la que fueron recopilados. Por ejemplo, conservaremos los detalles de una sugerencia hasta que haya sido procesada y respondida. Una vez que la finalidad se ha cumplido, o si expira cualquier plazo legal aplicable, los datos son eliminados de forma segura y permanente de nuestros sistemas.
+        </li>
     </ul>
     
     <h2>9. Derechos del Usuario (ARCO) y Mecanismos de Ejercicio</h2>
     <p>
-        Reconocemos y garantizamos sus derechos sobre sus datos personales. Puede ejercerlos en cualquier momento:
+        En ProjectNocturne, no solo reconocemos, sino que garantizamos plenamente sus derechos sobre sus datos personales, en línea con los más altos estándares de protección de datos. Usted tiene el control y puede ejercer los siguientes derechos en cualquier momento:
     </p>
     <ul>
-        <li><strong>Derecho de Acceso:</strong> Puede solicitar confirmación sobre si estamos tratando datos que le conciernen y acceder a ellos.</li>
-        <li><strong>Derecho de Rectificación:</strong> Puede solicitar la corrección de datos personales inexactos.</li>
-        <li><strong>Derecho de Supresión ("Derecho al Olvido"):</strong> Puede solicitar la eliminación de sus datos, tanto locales (a través de su navegador) como del servidor (contactándonos).</li>
-        <li><strong>Derecho a la Limitación y Oposición:</strong> Puede solicitar la limitación del tratamiento u oponerse al mismo en determinadas circunstancias.</li>
+        <li>
+            <strong>Derecho de Acceso:</strong> Usted tiene derecho a obtener confirmación de si en ProjectNocturne estamos tratando datos personales que le conciernen y, en tal caso, a acceder a dichos datos. Esto incluye el derecho a conocer los fines del tratamiento, las categorías de datos tratados y los destinatarios de los mismos. Dado que el único dato personal que almacenamos en el servidor es su correo electrónico (si nos contacta), puede solicitar la confirmación de su existencia y una copia del mismo.
+        </li>
+        <li>
+            <strong>Derecho de Rectificación:</strong> Si considera que los datos personales que podamos tener sobre usted (como su dirección de correo electrónico en el contexto de una comunicación) son inexactos o incompletos, tiene derecho a solicitar su corrección sin dilación indebida.
+        </li>
+        <li>
+            <strong>Derecho de Supresión ("Derecho al Olvido"):</strong> Usted tiene derecho a solicitar la eliminación de sus datos personales. Esto aplica tanto a los datos almacenados localmente en su navegador (que puede eliminar directamente a través de las opciones de limpieza de su navegador) como a los datos que podamos tener en nuestros servidores (como su correo electrónico tras una consulta). Una vez recibida su solicitud, procederemos a la eliminación segura de su información, siempre y cuando no exista una obligación legal que nos impida hacerlo.
+        </li>
+        <li>
+            <strong>Derecho a la Limitación y Oposición del Tratamiento:</strong> En determinadas circunstancias, usted tiene derecho a solicitar la limitación del tratamiento de sus datos o a oponerse a dicho tratamiento. Por ejemplo, puede oponerse a que sus datos (correo electrónico) sigan siendo tratados tras haber resuelto una consulta. Respetaremos su solicitud y cesaremos el tratamiento, salvo por motivos legítimos imperiosos o para la formulación, el ejercicio o la defensa de reclamaciones.
+        </li>
     </ul>
 
     <h2>10. Medidas de Seguridad Implementadas</h2>
