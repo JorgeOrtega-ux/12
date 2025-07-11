@@ -13,6 +13,10 @@ import { getCurrentLocation } from './location-manager.js';
 let onConfirmCallback = null;
 let activeModalType = null;
 
+// --- INICIO DE LA MODIFICACIÓN ---
+const CREATION_TIMEOUT = 500;
+// --- FIN DE LA MODIFICACIÓN ---
+
 function populateConfirmationModal(data) {
     const modalMenu = document.querySelector('.menu-delete');
     if (!modalMenu) return;
@@ -149,7 +153,7 @@ export function resetOverlayNavigation() {
     const overlay = document.querySelector('.module-overlay');
     if (!overlay) return;
 
-    const subMenus = overlay.querySelectorAll('.menu-sounds, .menu-country, .menu-timeZone, .menu-calendar, .menu-timePicker, .menu-feedback-types');
+    const subMenus = overlay.querySelectorAll('.menu-sounds, .menu-country, .menu-timeZone, .menu-calendar, .menu-timePicker, .menu-delete, .menu-feedback, .menu-feedback-types');
     subMenus.forEach(subMenu => {
         subMenu.classList.remove('active');
         subMenu.classList.add('disabled');
@@ -1295,7 +1299,7 @@ async function handleMenuClick(event, parentMenu) {
             setTimeout(() => {
                 window.alarmManager?.createAlarm(alarmTitleInput.value.trim(), state.alarm.hour, state.alarm.minute, state.alarm.sound);
                 deactivateModule('overlayContainer');
-            }, 500);
+            }, CREATION_TIMEOUT);
             break;
         }
         case 'createTimer': {
@@ -1311,7 +1315,7 @@ async function handleMenuClick(event, parentMenu) {
                 setTimeout(() => {
                     addTimerAndRender({ type: 'countdown', title: timerTitleInput.value.trim(), duration: (hours * 3600 + minutes * 60 + seconds) * 1000, sound: state.timer.sound });
                     deactivateModule('overlayContainer');
-                }, 500);
+                }, CREATION_TIMEOUT);
             } else {
                 const eventTitleInput = parentMenu.querySelector('#countto-title');
                 const { selectedDate, selectedHour, selectedMinute } = state.timer.countTo;
@@ -1322,7 +1326,7 @@ async function handleMenuClick(event, parentMenu) {
                     targetDate.setHours(selectedHour, selectedMinute, 0, 0);
                     addTimerAndRender({ type: 'count_to_date', title: eventTitleInput.value.trim(), targetDate: targetDate.toISOString(), sound: state.timer.countTo.sound });
                     deactivateModule('overlayContainer');
-                }, 500);
+                }, CREATION_TIMEOUT);
             }
             break;
         }
@@ -1338,7 +1342,7 @@ async function handleMenuClick(event, parentMenu) {
             setTimeout(() => {
                 window.worldClockManager?.createAndStartClockCard(clockTitleInput.value.trim(), country, timezone);
                 deactivateModule('overlayContainer');
-            }, 500);
+            }, CREATION_TIMEOUT);
             break;
         }
         case 'saveAlarmChanges': {
@@ -1357,7 +1361,7 @@ async function handleMenuClick(event, parentMenu) {
                     sound: state.alarm.sound
                 });
                 deactivateModule('overlayContainer');
-            }, 500);
+            }, CREATION_TIMEOUT);
             break;
         }
         case 'saveTimerChanges': {
@@ -1377,7 +1381,7 @@ async function handleMenuClick(event, parentMenu) {
                     sound: state.timer.sound
                 });
                 deactivateModule('overlayContainer');
-            }, 500);
+            }, CREATION_TIMEOUT);
             break;
         }
         case 'saveCountToDateChanges': {
@@ -1399,7 +1403,7 @@ async function handleMenuClick(event, parentMenu) {
                     sound: state.timer.countTo.sound
                 });
                 deactivateModule('overlayContainer');
-            }, 500);
+            }, CREATION_TIMEOUT);
             break;
         }
         case 'saveWorldClockChanges': {
@@ -1419,7 +1423,7 @@ async function handleMenuClick(event, parentMenu) {
                     timezone: timezone
                 });
                 deactivateModule('overlayContainer');
-            }, 500);
+            }, CREATION_TIMEOUT);
             break;
         }
     }
