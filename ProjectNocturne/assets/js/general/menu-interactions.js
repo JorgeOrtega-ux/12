@@ -92,18 +92,14 @@ export function showModal(type, data = {}, onConfirm = null) {
             setupModalEventListeners();
         }, 50);
 
-    } else if (type === 'suggestion') {
-        activateModule('toggleSuggestionMenu');
-        setTimeout(() => {
-           // populateSuggestionModal();
-           // setupModalEventListeners();
-        }, 50);
+    } else if (type === 'feedback') {
+        activateModule('toggleFeedbackMenu');
     }
 }
 
 export function hideModal() {
     if (activeModalType) {
-        const moduleToDeactivate = activeModalType === 'confirmation' ? 'toggleDeleteMenu' : 'toggleSuggestionMenu';
+        const moduleToDeactivate = activeModalType === 'confirmation' ? 'toggleDeleteMenu' : 'toggleFeedbackMenu';
         deactivateModule(moduleToDeactivate, { source: `hide-modal-${activeModalType}` });
         activeModalType = null;
         onConfirmCallback = null;
@@ -153,7 +149,7 @@ export function resetOverlayNavigation() {
     const overlay = document.querySelector('.module-overlay');
     if (!overlay) return;
 
-    const subMenus = overlay.querySelectorAll('.menu-sounds, .menu-country, .menu-timeZone, .menu-calendar, .menu-timePicker, .menu-suggestion-types');
+    const subMenus = overlay.querySelectorAll('.menu-sounds, .menu-country, .menu-timeZone, .menu-calendar, .menu-timePicker, .menu-feedback-types');
     subMenus.forEach(subMenu => {
         subMenu.classList.remove('active');
         subMenu.classList.add('disabled');
@@ -252,7 +248,7 @@ function getMenuElement(menuName) {
         'menuCalendar': '.menu-calendar[data-menu="calendar"]',
         'timePicker': '.menu-timePicker[data-menu="timePicker"]',
         'timeZone': '.menu-timeZone[data-menu="timeZone"]',
-        'menuSuggestionTypes': '.menu-suggestion-types[data-menu="suggestionTypes"]'
+        'menuFeedbackTypes': '.menu-feedback-types[data-menu="feedbackTypes"]'
     };
     return document.querySelector(menuSelectorMap[menuName]);
 };
@@ -985,7 +981,7 @@ function setupGlobalEventListeners() {
     });
 
     document.body.addEventListener('click', (event) => {
-       const parentMenu = event.target.closest('.menu-alarm, .menu-timer, .menu-worldClock, .menu-sounds, .menu-country, .menu-timeZone, .menu-calendar, .menu-timePicker, .menu-suggestions, .menu-suggestion-types');
+       const parentMenu = event.target.closest('.menu-alarm, .menu-timer, .menu-worldClock, .menu-sounds, .menu-country, .menu-timeZone, .menu-calendar, .menu-timePicker, .menu-feedback, .menu-feedback-types');
         if (!parentMenu || autoIncrementState.isActive) return;
         handleMenuClick(event, parentMenu);
     });
@@ -1033,25 +1029,25 @@ async function handleMenuClick(event, parentMenu) {
 
     const action = target.dataset.action;
 
-    if (action === 'open-suggestion-types-menu') {
-        navigateToMenu('suggestionTypes');
+    if (action === 'open-feedback-types-menu') {
+        navigateToMenu('feedbackTypes');
         return;
     }
-    if (action === 'select-suggestion-type') {
+    if (action === 'select-feedback-type') {
         event.stopPropagation();
         const option = target.closest('[data-value]');
         if (!option) return;
 
         const value = option.dataset.value;
         const textSpan = option.querySelector('span[data-translate]');
-        const suggestionsMenu = document.querySelector('.menu-suggestions');
-        if(!suggestionsMenu) return;
+        const feedbackMenu = document.querySelector('.menu-feedback');
+        if(!feedbackMenu) return;
 
-        const display = suggestionsMenu.querySelector('#suggestion-type-display');
-        const trigger = suggestionsMenu.querySelector('[data-action="open-suggestion-types-menu"]');
+        const display = feedbackMenu.querySelector('#feedback-type-display');
+        const hiddenInput = feedbackMenu.querySelector('#feedback-type-value');
 
-        if (display && textSpan && trigger) {
-            trigger.setAttribute('data-selected-value', value);
+        if (display && textSpan && hiddenInput) {
+            hiddenInput.value = value;
             const translateKey = textSpan.getAttribute('data-translate');
             const translateCategory = textSpan.getAttribute('data-translate-category');
             if (translateKey && translateCategory) {
@@ -1429,32 +1425,31 @@ async function handleMenuClick(event, parentMenu) {
     }
 }
 
-function initializeSuggestionForm() {
-    const suggestionForm = document.getElementById('suggestion-form');
-    if (!suggestionForm) return;
+function initializeFeedbackForm() {
+    const feedbackForm = document.getElementById('feedback-form');
+    if (!feedbackForm) return;
 
-    suggestionForm.addEventListener('submit', async function(e) {
+    feedbackForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        // ----- INICIO DE LA MODIFICACIÓN -----
+        const submitButton = feedbackForm.querySelector('button[type="submit"]');
+        const messageInput = feedbackForm.querySelector('#feedback-text');
+        const emailInput = feedbackForm.querySelector('#feedback-email');
+        const typeInput = feedbackForm.querySelector('#feedback-type-value');
 
-        const submitButton = document.getElementById('submit-suggestion-btn');
-        const messageInput = suggestionForm.querySelector('#suggestion-text');
-        const emailInput = suggestionForm.querySelector('#suggestion-email');
-        
         let isValid = true;
         if (messageInput.value.trim() === '') {
-            messageInput.parentElement.classList.add('input-error');
+            validateField(messageInput.parentElement, false);
             isValid = false;
         } else {
-            messageInput.parentElement.classList.remove('input-error');
+            validateField(messageInput.parentElement, true);
         }
 
         if (emailInput.value.trim() === '' || !/^\S+@\S+\.\S+$/.test(emailInput.value)) {
-            emailInput.parentElement.classList.add('input-error');
+            validateField(emailInput.parentElement, false);
             isValid = false;
         } else {
-            emailInput.parentElement.classList.remove('input-error');
+            validateField(emailInput.parentElement, true);
         }
 
         if (!isValid) {
@@ -1462,84 +1457,48 @@ function initializeSuggestionForm() {
             return;
         }
 
-        const formData = new FormData(suggestionForm);
-        const suggestionTypeValue = document.getElementById('suggestion-type-value').value;
-        formData.set('suggestion_type', suggestionTypeValue);
-
-        const originalButtonHTML = submitButton.innerHTML;
-        submitButton.innerHTML = '<span class="material-symbols-rounded spinning">progress_activity</span>';
-        submitButton.disabled = true;
+        addSpinnerToCreateButton(submitButton);
 
         try {
-            const response = await fetch(suggestionForm.action, {
+            const formData = new FormData(feedbackForm);
+            const response = await fetch(feedbackForm.action, {
                 method: 'POST',
                 body: formData
             });
-
             const result = await response.json();
 
             if (result.success) {
-                showDynamicIslandNotification('system', 'success', result.message || 'Sugerencia enviada con éxito.', 'notifications');
+                showDynamicIslandNotification('system', 'success', result.message || 'Comentario enviado con éxito.', 'notifications');
+                feedbackForm.reset();
                 
-                // Reiniciar el formulario y el menú
-                suggestionForm.reset();
-                
-                // Resetear visualmente el selector de tipo
-                const typeDisplay = document.getElementById('suggestion-type-display');
-                const typeValueInput = document.getElementById('suggestion-type-value');
-                if(typeDisplay && typeValueInput) {
-                    typeDisplay.setAttribute('data-translate', 'suggestion_type_improvement');
-                    typeDisplay.textContent = getTranslation('suggestion_type_improvement', 'menu');
-                    typeValueInput.value = 'improvement';
+                const typeDisplay = document.getElementById('feedback-type-display');
+                if (typeDisplay) {
+                    typeDisplay.setAttribute('data-translate', 'feedback_type_improvement');
+                    typeDisplay.textContent = getTranslation('feedback_type_improvement', 'menu');
+                    typeInput.value = 'improvement';
                 }
-
-                // Limpiar los indicadores de error
-                messageInput.parentElement.classList.remove('input-error');
-                emailInput.parentElement.classList.remove('input-error');
                 
-                deactivateModule('toggleSuggestionMenu');
-
+                deactivateModule('toggleFeedbackMenu');
             } else {
                 showDynamicIslandNotification('system', 'error', result.message || 'Ocurrió un error.', 'notifications');
             }
-
         } catch (error) {
-            console.error('Error submitting suggestion:', error);
+            console.error('Error submitting feedback:', error);
             showDynamicIslandNotification('system', 'error', 'No se pudo conectar con el servidor.', 'notifications');
         } finally {
-            // Restaurar el botón a su estado original
-            submitButton.innerHTML = originalButtonHTML;
-            submitButton.disabled = false;
+            removeSpinnerFromCreateButton(submitButton);
         }
-        
-        // ----- FIN DE LA MODIFICACIÓN -----
     });
 
-    const cancelButton = suggestionForm.querySelector('[data-action="cancel-suggestion"]');
+    const cancelButton = feedbackForm.querySelector('[data-action="cancel-feedback"]');
     if (cancelButton) {
         cancelButton.addEventListener('click', () => {
-            deactivateModule('toggleSuggestionMenu');
-        });
-    }
-
-    const suggestionTypesMenu = document.querySelector('.menu-suggestion-types');
-    if (suggestionTypesMenu) {
-        suggestionTypesMenu.addEventListener('click', (e) => {
-            const selectedTypeElement = e.target.closest('[data-action="select-suggestion-type"]');
-            if (selectedTypeElement) {
-                const value = selectedTypeElement.dataset.value;
-                const hiddenInput = document.getElementById('suggestion-type-value');
-                if (hiddenInput) {
-                    hiddenInput.value = value;
-                }
-            }
+            deactivateModule('toggleFeedbackMenu');
         });
     }
 }
 
-
-// Llama a esta función en la inicialización de tu app.
-document.addEventListener('DOMContentLoaded', initializeSuggestionForm);
+document.addEventListener('DOMContentLoaded', initializeFeedbackForm);
 
 window.getCurrentlyPlayingSoundId = () => currentlyPlayingSound ? currentlyPlayingSound.id : null;
 export function initMenuInteractions() {

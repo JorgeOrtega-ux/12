@@ -65,9 +65,6 @@
                                     <textarea class="feedback-text overflow-y" id="feedback-text" name="feedback_text" rows="5" required></textarea>
                                 </div>
                             </div>
-
-
-
                         </div>
                     </div>
                 </div>
