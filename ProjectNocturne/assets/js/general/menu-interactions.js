@@ -1502,6 +1502,11 @@ function initializeFeedbackForm() {
         setTimeout(async () => {
             try {
                 const formData = new FormData(feedbackForm);
+                const uuid = localStorage.getItem('user-unique-id');
+                if (uuid) {
+                    formData.append('uuid', uuid);
+                }
+
                 const response = await fetch(feedbackForm.action, {
                     method: 'POST',
                     body: formData
