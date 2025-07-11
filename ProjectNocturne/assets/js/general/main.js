@@ -179,8 +179,14 @@ function updateSidebarButtons(activeSection) {
 function switchToLegalView(sectionName) {
     sectionStates.currentView = 'legal';
 
+    // Desktop sidebar
     document.querySelector('.sidebar-tools')?.classList.add('disabled');
     document.querySelector('.sidebar-legal-options')?.classList.remove('disabled');
+
+    // Mobile sidebar
+    document.querySelector('.mobile-sidebar .sidebar-tools')?.classList.add('disabled');
+    document.querySelector('.mobile-sidebar .sidebar-legal-options')?.classList.remove('disabled');
+
 
     activateSection(sectionName);
 }
@@ -188,8 +194,13 @@ function switchToLegalView(sectionName) {
 function switchToToolsView(showLog = false) {
     sectionStates.currentView = 'tools';
 
+    // Desktop sidebar
     document.querySelector('.sidebar-legal-options')?.classList.add('disabled');
     document.querySelector('.sidebar-tools')?.classList.remove('disabled');
+
+    // Mobile sidebar
+    document.querySelector('.mobile-sidebar .sidebar-legal-options')?.classList.add('disabled');
+    document.querySelector('.mobile-sidebar .sidebar-tools')?.classList.remove('disabled');
 
     activateSection('everything', showLog);
 }
