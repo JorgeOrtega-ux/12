@@ -67,26 +67,38 @@ function setCurrentLanguage(language) {
 
 function loadTranslations(language) {
     return new Promise((resolve, reject) => {
-        fetch(`config/translations/${language}.json`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+        // Paths for general and legal translation files
+        const generalTranslationsPath = `config/translations/${language}.json`;
+        const legalTranslationsPath = `config/translations/legal/${language}.json`;
+
+        // Use Promise.all to fetch both files concurrently
+        Promise.all([
+            fetch(generalTranslationsPath).then(response => {
+                if (!response.ok) throw new Error(`HTTP error for general translations! status: ${response.status}`);
+                return response.json();
+            }),
+            fetch(legalTranslationsPath).then(response => {
+                if (!response.ok) throw new Error(`HTTP error for legal translations! status: ${response.status}`);
                 return response.json();
             })
-            .then(data => {
-                translations = data;
-                resolve();
-            })
-            .catch(error => {
-                console.error(`❌ Error loading translations for ${language}:`, error);
-                if (language !== 'en-us') {
-                    return loadTranslations('en-us').then(resolve).catch(reject);
-                }
-                reject(error);
-            });
+        ])
+        .then(([generalData, legalData]) => {
+            // Merge both translation objects into one
+            translations = { ...generalData, ...legalData };
+            resolve();
+        })
+        .catch(error => {
+            console.error(`❌ Error loading translations for ${language}:`, error);
+            // Fallback to English if the selected language fails
+            if (language !== 'en-us') {
+                console.log('Retrying with en-us...');
+                return loadTranslations('en-us').then(resolve).catch(reject);
+            }
+            reject(error);
+        });
     });
 }
+
 
 // ========== IMPROVED TRANSLATION APPLICATION ==========
 
@@ -100,6 +112,7 @@ function applyTranslations() {
     updateDynamicMenuLabels();
     updateTooltipTranslations();
     updateColorSystemHeaders();
+    updateLegalDates(); // <-- Llamada a la nueva función
 }
 
 // ========== NEW UNIFIED SYSTEM WITH data-translate ==========
@@ -133,7 +146,7 @@ function translateElementsWithDataTranslate(parentElement = document.body) {
 
         switch (translateTarget) {
             case 'text':
-                element.innerHTML = translatedText; // <-- CORRECCIÓN CLAVE
+                element.innerHTML = translatedText;
                 break;
             case 'tooltip':
                 break;
@@ -147,7 +160,7 @@ function translateElementsWithDataTranslate(parentElement = document.body) {
                 element.setAttribute('aria-label', translatedText);
                 break;
             default:
-                element.innerHTML = translatedText; // <-- CORRECCIÓN CLAVE
+                element.innerHTML = translatedText;
         }
     });
 }
@@ -301,6 +314,38 @@ function setupLanguageChangeListener() {
     });
 }
 
+// ========== NEW FUNCTION FOR LEGAL DATES ==========
+function updateLegalDates() {
+    const dateElements = document.querySelectorAll('[data-dynamic-date]');
+
+    dateElements.forEach(element => {
+        const parentP = element.closest('[data-date-iso]');
+        if (!parentP) return;
+
+        const isoDate = parentP.dataset.dateIso; // e.g., "2025-07-10"
+        if (!isoDate) return;
+
+        // Appending T12:00:00Z makes the date parsing timezone-independent (UTC)
+        const date = new Date(isoDate + 'T12:00:00Z');
+        if (isNaN(date.getTime())) return; 
+
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        };
+
+        try {
+            // Use currentLanguage from the controller's state. 'en-us', 'es-mx' are valid locales.
+            element.textContent = new Intl.DateTimeFormat(currentLanguage, options).format(date);
+        } catch (e) {
+            console.error(`Error formatting date for language ${currentLanguage}:`, e);
+            // Fallback for safety
+            element.textContent = date.toLocaleDateString();
+        }
+    });
+}
+
 // ========== PUBLIC FUNCTIONS ==========
 
 function getTranslation(key, category = 'menu') {
@@ -358,6 +403,7 @@ function debugTranslationsController() {
     console.log('- Search placeholder:', getTranslation('search_placeholder', 'search'));
     console.log('- Harmonies section:', getTranslation('harmonies', 'search_sections'));
     console.log('- Gradient colors section:', getTranslation('gradient_colors', 'color_system'));
+    console.log('- Legal (Privacy Title):', getTranslation('privacy_title', 'legal_docs'));
 
     console.groupEnd();
 }

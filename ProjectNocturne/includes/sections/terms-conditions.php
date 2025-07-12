@@ -1,6 +1,6 @@
 <div class="section-legal-content disabled" data-section="terms-conditions">
     <h1 data-translate="terms_title" data-translate-category="legal_docs"></h1>
-    <p><strong data-translate="terms_last_updated" data-translate-category="legal_docs"></strong> 10 de julio de 2025</p>
+    <p data-date-iso="2025-07-10"><strong data-translate="terms_last_updated" data-translate-category="legal_docs"></strong> <span data-dynamic-date></span></p>
 
     <h2 data-translate="terms_intro_title" data-translate-category="legal_docs"></h2>
     <p data-translate="terms_intro_p1" data-translate-category="legal_docs"></p>
@@ -48,7 +48,7 @@
     <h2 data-translate="terms_indemnification_title" data-translate-category="legal_docs"></h2>
     <p data-translate="terms_indemnification_p1" data-translate-category="legal_docs"></p>
 
-<h2 data-translate="terms_termination_title" data-translate-category="legal_docs"></h2>
+    <h2 data-translate="terms_termination_title" data-translate-category="legal_docs"></h2>
     <p data-translate="terms_termination_intro" data-translate-category="legal_docs"></p>
     <ul>
         <li data-translate="terms_termination_li1" data-translate-category="legal_docs"></li>

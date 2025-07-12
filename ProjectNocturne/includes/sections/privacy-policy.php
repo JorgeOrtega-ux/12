@@ -1,6 +1,6 @@
 <div class="section-legal-content disabled" data-section="privacy-policy">
     <h1 data-translate="privacy_title" data-translate-category="legal_docs"></h1>
-    <p><strong data-translate="privacy_last_updated" data-translate-category="legal_docs"></strong> 10 de julio de 2025</p>
+    <p data-date-iso="2025-07-10"><strong data-translate="privacy_last_updated" data-translate-category="legal_docs"></strong> <span data-dynamic-date></span></p>
 
     <h2 data-translate="privacy_intro_title" data-translate-category="legal_docs"></h2>
     <p data-translate="privacy_intro_p1" data-translate-category="legal_docs"></p>
