@@ -1,14 +1,13 @@
 // assets/js/tools/alarm-controller.js
 
-// alarm-controller.js - CÓDIGO COMPLETO CON LÓGICA UNIFICADA Y CONSISTENTE
 import { use24HourFormat, activateModule, getCurrentActiveOverlay, allowCardMovement } from '../general/main.js';
 import { prepareAlarmForEdit } from '../general/menu-interactions.js';
-import { playSound as playAlarmSound, stopSound as stopAlarmSound, initializeSortable, getAvailableSounds, handleAlarmCardAction, getSoundNameById, createExpandableToolContainer } from './general-tools.js';
+import { playSound as playAlarmSound, stopSound as stopAlarmSound, initializeSortable, getAvailableSounds, handleAlarmCardAction, getSoundNameById, createExpandableToolContainer, createToolCard } from './general-tools.js';
 import { showDynamicIslandNotification, hideDynamicIsland } from '../general/dynamic-island-controller.js';
 import { updateEverythingWidgets } from './everything-controller.js';
 import { getTranslation } from '../general/translations-controller.js';
 import { showModal } from '../general/menu-interactions.js';
-import { trackEvent } from '../general/event-tracker.js'; 
+import { trackEvent } from '../general/event-tracker.js';
 
 const ALARMS_STORAGE_KEY = 'user-alarms';
 const DEFAULT_ALARMS_STORAGE_KEY = 'default-alarms-order';
@@ -391,8 +390,6 @@ function dismissAlarm(alarmId) {
     }
 }
 
-// ========== RESTO DE FUNCIONES (IGUAL QUE ANTES) ==========
-
 function renderAlarmSearchResults(searchTerm) {
     const menuElement = document.querySelector('.menu-alarm[data-menu="alarm"]');
     if (!menuElement) return;
@@ -621,98 +618,51 @@ function renderAllAlarmCards() {
     const defaultGrid = document.querySelector('.tool-grid[data-alarm-grid="default"]');
     if (userGrid) userGrid.innerHTML = '';
     if (defaultGrid) defaultGrid.innerHTML = '';
-    userAlarms.forEach(alarm => createAlarmCard(alarm));
-    defaultAlarmsState.forEach(alarm => createAlarmCard(alarm));
+    userAlarms.forEach(alarm => {
+        const card = createAlarmCardFromData(alarm);
+        userGrid.appendChild(card);
+    });
+    defaultAlarmsState.forEach(alarm => {
+        const card = createAlarmCardFromData(alarm);
+        defaultGrid.appendChild(card);
+    });
 }
 
-function createAlarmCard(alarm) {
-    const grid = document.querySelector(`.tool-grid[data-alarm-grid="${alarm.type}"]`);
-    if (!grid) return;
-
+function createAlarmCardFromData(alarm) {
     const translatedTitle = alarm.type === 'default' ? getTranslation(alarm.title, 'alarms') : alarm.title;
     const soundName = getSoundNameById(alarm.sound);
     const controlsState = getAlarmControlsState(alarm);
+    const timeValue = formatTime(alarm.hour, alarm.minute);
 
-    const deleteLinkHtml = alarm.type === 'default' ? '' : `
-        <div class="menu-link ${controlsState.deleteDisabled ? 'disabled-interactive' : ''}" data-action="delete-alarm">
-            <div class="menu-link-icon"><span class="material-symbols-rounded">delete</span></div>
-            <div class="menu-link-text"><span data-translate="delete_alarm" data-translate-category="alarms">${getTranslation('delete_alarm', 'alarms')}</span></div>
-        </div>
-    `;
-
-    let rangAgoTag = '';
+    let tags = [{ text: soundName, soundId: alarm.sound }];
     if (shouldShowRangAtTag(alarm)) {
         const timeAgo = formatTimeSince(alarm.rangAt);
         const rangAgoText = getTranslation('rang_ago', 'timer').replace('{time}', timeAgo);
-        rangAgoTag = `<span class="card-tag rang-ago-tag">${rangAgoText}</span>`;
+        tags.push({ text: rangAgoText });
     }
 
-    const cardHTML = `
-        <div class="tool-card alarm-card ${!alarm.enabled ? 'alarm-disabled' : ''}" id="${alarm.id}" data-id="${alarm.id}" data-type="${alarm.type}">
-            <div class="card-header">
-                <div class="card-details">
-                    <span class="card-title">${translatedTitle}</span>
-                    <span class="card-value">${formatTime(alarm.hour, alarm.minute)}</span>
-                </div>
-            </div>
-            <div class="card-footer">
-                <div class="card-tags">
-                    <span class="card-tag" data-sound-id="${alarm.sound}">${soundName}</span>
-                    ${rangAgoTag}
-                </div>
-            </div>
-            <div class="card-options-container">
-                <button class="card-dismiss-btn" data-type="alarm" data-action="dismiss-alarm">
-                    <span data-translate="dismiss" data-translate-category="alarms">Dismiss</span>
-                </button>
-            </div>
-            <div class="card-menu-container disabled">
-                <button class="card-action-btn" data-action="toggle-alarm-menu"
-                        data-translate="options"
-                        data-translate-category="world_clock_options"
-                        data-translate-target="tooltip">
-                    <span class="material-symbols-rounded">more_horiz</span>
-                </button>
-                <div class="card-dropdown-menu disabled body-title">
-                    <div class="menu-link ${controlsState.toggleDisabled ? 'disabled-interactive' : ''}" data-action="toggle-alarm">
-                        <div class="menu-link-icon"><span class="material-symbols-rounded">${alarm.enabled ? 'toggle_on' : 'toggle_off'}</span></div>
-                        <div class="menu-link-text"><span data-translate="${alarm.enabled ? 'deactivate_alarm' : 'activate_alarm'}" data-translate-category="alarms">${getTranslation(alarm.enabled ? 'deactivate_alarm' : 'activate_alarm', 'alarms')}</span></div>
-                    </div>
-                    <div class="menu-link ${controlsState.testDisabled ? 'disabled-interactive' : ''}" data-action="test-alarm">
-                        <div class="menu-link-icon"><span class="material-symbols-rounded">volume_up</span></div>
-                        <div class="menu-link-text"><span data-translate="test_alarm" data-translate-category="alarms">${getTranslation('test_alarm', 'alarms')}</span></div>
-                    </div>
-                    <div class="menu-link ${controlsState.editDisabled ? 'disabled-interactive' : ''}" data-action="edit-alarm">
-                        <div class="menu-link-icon"><span class="material-symbols-rounded">edit</span></div>
-                        <div class="menu-link-text"><span data-translate="edit_alarm" data-translate-category="alarms">${getTranslation('edit_alarm', 'alarms')}</span></div>
-                    </div>
-                    ${deleteLinkHtml}
-                </div>
-            </div>
-        </div>
-    `;
-    grid.insertAdjacentHTML('beforeend', cardHTML);
-    const newCard = document.getElementById(alarm.id);
-    if (newCard) {
-        addCardEventListeners(newCard);
-    }
-}
+    const menuItems = [
+        { action: 'toggle-alarm', icon: alarm.enabled ? 'toggle_on' : 'toggle_off', textKey: alarm.enabled ? 'deactivate_alarm' : 'activate_alarm', textCategory: 'alarms', disabled: controlsState.toggleDisabled },
+        { action: 'test-alarm', icon: 'volume_up', textKey: 'test_alarm', textCategory: 'alarms', disabled: controlsState.testDisabled },
+        { action: 'edit-alarm', icon: 'edit', textKey: 'edit_alarm', textCategory: 'alarms', disabled: controlsState.editDisabled },
+    ];
 
-function addCardEventListeners(card) {
-    const menuContainer = card.querySelector('.card-menu-container');
-    card.addEventListener('mouseenter', () => {
-        menuContainer?.classList.remove('disabled');
-    });
-    card.addEventListener('mouseleave', () => {
-        const dropdown = card.querySelector('.card-dropdown-menu');
-        if (dropdown?.classList.contains('disabled')) {
-            menuContainer?.classList.add('disabled');
-        }
-    });
-    const dismissButton = card.querySelector('[data-action="dismiss-alarm"]');
-    if (dismissButton) {
-        dismissButton.addEventListener('click', () => dismissAlarm(card.id));
+    if (alarm.type !== 'default') {
+        menuItems.push({ action: 'delete-alarm', icon: 'delete', textKey: 'delete_alarm', textCategory: 'alarms', disabled: controlsState.deleteDisabled });
     }
+
+    return createToolCard({
+        id: alarm.id,
+        cardClass: 'alarm-card',
+        cardType: 'alarm',
+        title: translatedTitle,
+        value: timeValue,
+        tags: tags,
+        menuItems: menuItems,
+        dismissAction: 'dismiss-alarm',
+        isDisabled: !alarm.enabled,
+        type: alarm.type // for data-type attribute
+    });
 }
 
 function findAlarmById(alarmId) {
@@ -856,17 +806,13 @@ function handleDeleteAlarm(alarmId) {
 
     const alarmName = alarm.type === 'default' ? getTranslation(alarm.title, 'alarms') : alarm.title;
     
-    // --- INICIO DE LA CORRECCIÓN ---
-    // Se activa el contenedor del overlay antes de mostrar el modal.
     activateModule('overlayContainer');
     
-    // Se usa un pequeño retardo para asegurar que el overlay esté visible antes de la navegación interna.
     setTimeout(() => {
         showModal('confirmation', { type: 'alarm', name: alarmName }, () => {
             deleteAlarm(alarmId);
         });
     }, 50);
-    // --- FIN DE LA CORRECCIÓN ---
 }
 
 

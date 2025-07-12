@@ -145,12 +145,8 @@ async function deleteUserAudio(audioId, callback) {
         await deleteAudioFromDB(audioId);
         userAudiosCache = userAudiosCache.filter(audio => audio.id !== audioId);
         replaceDeletedAudioInTools(audioId, 'classic_beep');
-        
-        // --- INICIO DE LA CORRECCIÓN ---
-        // Se añade la llamada a la notificación de la isla dinámica.
-        // Nota: Se reutilizan claves de traducción existentes. Para un mensaje ideal, se debería añadir una clave "audio_deleted" a los archivos de traducción.
+
         showDynamicIslandNotification('system', 'success', `El audio '${audioToDelete.name}' ha sido eliminado.`, 'notifications');
-        // --- FIN DE LA CORRECCIÓN ---
 
         if (typeof callback === 'function') {
             callback();
@@ -1266,6 +1262,8 @@ export function initializeSortable(gridSelector, options) {
         console.warn('SortableJS not available. Drag-and-drop functionality will be disabled.');
     }
 }
+
+// INICIO DE LA LÓGICA CENTRALIZADA
 export function initializeCardEventListeners() {
     const mainContainer = document.querySelector('.general-content-scrolleable');
     if (!mainContainer) {
@@ -1275,47 +1273,66 @@ export function initializeCardEventListeners() {
 
     mainContainer.addEventListener('click', (e) => {
         const card = e.target.closest('.tool-card');
-        if (!card) {
-            // Si se hace clic fuera de cualquier tarjeta, se cierran todos los menús.
-            document.querySelectorAll('.card-dropdown-menu').forEach(m => m.classList.add('disabled'));
-            return;
-        }
 
-        const cardId = card.dataset.id;
+        if (!e.target.closest('.card-menu-container')) {
+            document.querySelectorAll('.card-dropdown-menu').forEach(m => m.classList.add('disabled'));
+        }
+        
+        if (!card) return;
+
         const actionTarget = e.target.closest('[data-action]');
         if (!actionTarget) return;
 
+        const cardId = card.dataset.id;
         const action = actionTarget.dataset.action;
 
-        // Lógica centralizada para abrir/cerrar los menús desplegables
-        const isMenuToggle = action === 'toggle-alarm-menu' ||
-                             action === 'toggle-timer-options' ||
-                             action === 'toggle-card-menu';
-
-        if (isMenuToggle) {
+        if (action === 'toggle-card-menu') {
             e.stopPropagation();
             const dropdown = card.querySelector('.card-dropdown-menu');
             if (dropdown) {
                 const isOpening = dropdown.classList.contains('disabled');
-                // Primero, cierra todos los demás menús desplegables
                 document.querySelectorAll('.card-dropdown-menu').forEach(m => {
-                    if (m !== dropdown) {
-                        m.classList.add('disabled');
-                    }
+                    if (m !== dropdown) m.classList.add('disabled');
                 });
-                // Luego, abre o cierra el menú actual
                 dropdown.classList.toggle('disabled');
             }
-            return; // Detiene la ejecución para no procesar otras acciones
+            return;
         }
 
-        // Si la acción no es para abrir un menú, se delega a los manejadores específicos.
+        if (actionTarget.classList.contains('disabled-interactive')) {
+            e.stopPropagation();
+            return;
+        }
+
         if (card.classList.contains('alarm-card')) {
             handleAlarmCardAction(action, cardId, actionTarget);
         } else if (card.classList.contains('timer-card')) {
             handleTimerCardAction(action, cardId, actionTarget);
         } else if (card.classList.contains('world-clock-card')) {
             handleWorldClockCardAction(action, cardId, actionTarget);
+        }
+    });
+
+    mainContainer.addEventListener('mouseover', (e) => {
+        const card = e.target.closest('.tool-card');
+        if (card) {
+            const menuContainer = card.querySelector('.card-menu-container');
+            if (menuContainer) {
+                menuContainer.classList.remove('disabled');
+            }
+        }
+    });
+
+    mainContainer.addEventListener('mouseout', (e) => {
+        const card = e.target.closest('.tool-card');
+        if (card) {
+            const dropdown = card.querySelector('.card-dropdown-menu');
+            if (dropdown?.classList.contains('disabled')) {
+                 const menuContainer = card.querySelector('.card-menu-container');
+                 if (menuContainer && !menuContainer.contains(e.relatedTarget)) {
+                    menuContainer.classList.add('disabled');
+                 }
+            }
         }
     });
 }
@@ -1387,7 +1404,6 @@ export function handleTimerCardAction(action, timerId, target) {
     }
 }
 
-
 export function handleWorldClockCardAction(action, clockId, target) {
     if (!window.worldClockManager) {
         console.error("WorldClock manager no está disponible.");
@@ -1400,12 +1416,103 @@ export function handleWorldClockCardAction(action, clockId, target) {
             break;
         case 'edit-clock':
             window.worldClockManager.handleEditClock(clockId);
-            console.log("se activo el modoo editar reloj");
             break;
         case 'delete-clock':
             window.worldClockManager.deleteClock(clockId);
             break;
     }
 }
+
+/**
+ * **NUEVA FUNCIÓN CENTRALIZADA**
+ * Crea una tarjeta de herramienta genérica.
+ * @param {object} data - Un objeto con la configuración de la tarjeta.
+ * @param {string} data.id - El ID único para el elemento de la tarjeta.
+ * @param {string} data.cardClass - Clases CSS adicionales para la tarjeta (ej. 'alarm-card').
+ * @param {string} data.title - El título principal de la tarjeta.
+ * @param {string} data.value - El valor principal (ej. la hora).
+ * @param {Array<object>} data.tags - Un array de objetos para las etiquetas. Cada objeto: {text, soundId (opcional)}.
+ * @param {Array<object>} data.menuItems - Un array de objetos para los botones del menú. Cada objeto: {action, icon, textKey, textCategory, disabled (opcional)}.
+ * @param {string} data.dismissAction - La acción para el botón de descartar.
+ * @returns {HTMLElement} El elemento de la tarjeta creado.
+ */
+export function createToolCard(data) {
+    const card = document.createElement('div');
+    card.className = `tool-card ${data.cardClass}`;
+    card.id = data.id;
+    card.dataset.id = data.id;
+    if (data.type) {
+        card.dataset.type = data.type;
+    }
+
+    if (data.isFinished) {
+        card.classList.add('timer-finished'); // Ejemplo para temporizadores
+    }
+     if (data.isDisabled) {
+        card.classList.add('alarm-disabled'); // Ejemplo para alarmas
+    }
+
+    // Generar etiquetas
+    const tagsHTML = data.tags.map(tag => 
+        `<span class="card-tag" ${tag.soundId ? `data-sound-id="${tag.soundId}"` : ''}>${tag.text}</span>`
+    ).join('');
+
+    // Generar items del menú desplegable
+    const menuItemsHTML = data.menuItems.map(item => `
+        <div class="menu-link ${item.disabled ? 'disabled-interactive' : ''}" data-action="${item.action}">
+            <div class="menu-link-icon"><span class="material-symbols-rounded">${item.icon}</span></div>
+            <div class="menu-link-text"><span data-translate="${item.textKey}" data-translate-category="${item.textCategory}">${getTranslation(item.textKey, item.textCategory)}</span></div>
+        </div>
+    `).join('');
+    
+    // Botones de acción principales (Pin, Menú)
+    const actionButtonsHTML = (data.actionButtons || []).map(btn => `
+        <button class="card-action-btn ${btn.active ? 'active' : ''}" data-action="${btn.action}" data-translate="${btn.tooltipKey}" data-translate-category="tooltips" data-translate-target="tooltip">
+            <span class="material-symbols-rounded">${btn.icon}</span>
+        </button>
+    `).join('');
+
+    card.innerHTML = `
+        <div class="card-header">
+            <div class="card-details">
+                <span class="card-title">${data.title}</span>
+                <span class="card-value">${data.value}</span>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="card-tags">${tagsHTML}</div>
+        </div>
+        <div class="card-options-container">
+            <button class="card-dismiss-btn" data-type="${data.cardType}" data-action="${data.dismissAction}">
+                <span data-translate="dismiss" data-translate-category="alarms">${getTranslation('dismiss', 'alarms')}</span>
+            </button>
+        </div>
+        <div class="card-menu-container disabled">
+            ${actionButtonsHTML}
+            <button class="card-action-btn" data-action="toggle-card-menu" data-translate="options" data-translate-category="world_clock_options" data-translate-target="tooltip">
+                <span class="material-symbols-rounded">more_horiz</span>
+            </button>
+            <div class="card-dropdown-menu disabled body-title">
+                ${menuItemsHTML}
+            </div>
+        </div>
+    `;
+
+    const dismissButton = card.querySelector('[data-action="dismiss-alarm"], [data-action="dismiss-timer"]');
+    if (dismissButton) {
+        dismissButton.addEventListener('click', () => {
+             if (data.cardType === 'alarm' && window.alarmManager) {
+                window.alarmManager.dismissAlarm(data.id);
+            } else if (data.cardType === 'timer' && window.timerManager) {
+                window.timerManager.dismissTimer(data.id);
+            }
+        });
+    }
+
+    return card;
+}
+
+
+// FIN DE LA LÓGICA CENTRALIZADA
 
 export { deleteUserAudio, getSoundNameById };

@@ -1653,4 +1653,54 @@
 
 .custom-select-wrapper--row>.menu-action-button {
     flex-shrink: 0;
+}/* ====================================== */
+/* UNIFIED CARD ACTION BUTTON STYLES      */
+/* ====================================== */
+.card-action-btn {
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    color: #000000;
+    background-color: transparent;
+    border-radius: 8px;
+    border: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+}
+
+.card-action-btn:hover {
+    background-color: #f5f5fa;
+}
+
+.card-action-btn.active {
+    background-color: #f5f5fa;
+}
+
+.search-result-item .card-action-btn:hover {
+    background-color: #f5f5fa;
+}
+
+.search-result-item .card-action-btn.active {
+    background-color: #f5f5fa;
+}/* ====================================== */
+/* UNIFIED CARD ACTION BUTTON DARK MODE   */
+/* ====================================== */
+.dark-mode .card-action-btn {
+    color: #ffffff;
+}
+
+.dark-mode .card-action-btn:hover {
+    background-color: #ffffff20;
+}
+
+.dark-mode .card-action-btn.active {
+    background-color: #ffffff20;
+}
+
+.dark-mode .search-result-item .card-action-btn {
+    color: #fff;
 }

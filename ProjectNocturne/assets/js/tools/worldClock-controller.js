@@ -3,12 +3,12 @@
 import { use24HourFormat, activateModule, getCurrentActiveOverlay, allowCardMovement } from '../general/main.js';
 import { prepareWorldClockForEdit } from '../general/menu-interactions.js';
 import { updateZoneInfo } from '../config/zoneinfo-controller.js';
-import { initializeSortable, handleWorldClockCardAction } from './general-tools.js';
+import { initializeSortable, handleWorldClockCardAction, createToolCard } from './general-tools.js';
 import { showDynamicIslandNotification } from '../general/dynamic-island-controller.js';
 import { updateEverythingWidgets } from './everything-controller.js';
 import { getTranslation } from '../general/translations-controller.js';
 import { showModal } from '../general/menu-interactions.js';
-import { trackEvent } from '../general/event-tracker.js'; // <-- AÑADIDO
+import { trackEvent } from '../general/event-tracker.js';
 
 const clockIntervals = new Map();
 const CLOCKS_STORAGE_KEY = 'world-clocks';
@@ -332,78 +332,38 @@ function createAndStartClockCard(title, country, timezone, existingId = null, sa
     const ct = window.ct;
     const countryForTimezone = ct.getCountryForTimezone(timezone);
     const timezoneObject = countryForTimezone ? ct.getTimezonesForCountry(countryForTimezone.id)?.find(tz => tz.name === timezone) : null;
-    
-    // CORRECCIÓN: Se utiliza 'timezoneObject' en lugar de 'tzObject'
     const utcOffsetText = timezoneObject ? `UTC ${timezoneObject.utcOffsetStr}` : ''; 
-    
     const countryCode = countryForTimezone ? countryForTimezone.id : '';
     const cardId = existingId || `clock-card-${Date.now()}`;
-    const cardHTML = `
-        <div class="tool-card world-clock-card" id="${cardId}" data-id="${cardId}" data-timezone="${timezone}" data-country="${country}" data-country-code="${countryCode}" data-title="${title}">
-            <div class="card-header">
-                <div class="card-details">
-                    <span class="card-title">${title}</span>
-                    <span class="card-value">--:--:--</span>
-                </div>
-            </div>
-            <div class="card-footer">
-                <div class="card-tags">
-                    <span class="card-tag">${utcOffsetText}</span>
-                </div>
-            </div>
-            <div class="card-menu-container disabled">
-                 <button class="card-action-btn" data-action="pin-clock"
-                        data-translate="pin_clock"
-                        data-translate-category="tooltips"
-                        data-translate-target="tooltip">
-                    <span class="material-symbols-rounded">push_pin</span>
-                 </button>
-                 <button class="card-action-btn" data-action="toggle-card-menu"
-                         data-translate="options"
-                         data-translate-category="world_clock_options"
-                         data-translate-target="tooltip">
-                     <span class="material-symbols-rounded">more_horiz</span>
-                 </button>
-                 <div class="card-dropdown-menu disabled body-title">
-                     <div class="menu-link" data-action="edit-clock">
-                         <div class="menu-link-icon"><span class="material-symbols-rounded">edit</span></div>
-                         <div class="menu-link-text">
-                             <span data-translate="edit_clock"
-                                   data-translate-category="world_clock_options"
-                                   data-translate-target="text">Edit clock</span>
-                         </div>
-                     </div>
-                     <div class="menu-link" data-action="delete-clock">
-                         <div class="menu-link-icon"><span class="material-symbols-rounded">delete</span></div>
-                         <div class="menu-link-text">
-                             <span data-translate="delete_clock"
-                                   data-translate-category="world_clock_options"
-                                   data-translate-target="text">Delete clock</span>
-                         </div>
-                     </div>
-                 </div>
-            </div>
-        </div>
-    `;
-    grid.insertAdjacentHTML('beforeend', cardHTML);
-    const newCardElement = document.getElementById(cardId);
+
+    const newCardElement = createToolCard({
+        id: cardId,
+        cardClass: 'world-clock-card',
+        cardType: 'world-clock',
+        title: title,
+        value: '--:--:--',
+        tags: [{ text: utcOffsetText }],
+        menuItems: [
+            { action: 'edit-clock', icon: 'edit', textKey: 'edit_clock', textCategory: 'world_clock_options' },
+            { action: 'delete-clock', icon: 'delete', textKey: 'delete_clock', textCategory: 'world_clock_options' }
+        ],
+        actionButtons: [
+            { action: 'pin-clock', icon: 'push_pin', tooltipKey: 'pin_clock' }
+        ],
+        dismissAction: '', // No dismiss action for clocks
+        type: 'world-clock'
+    });
+    
+    // Set data attributes for later retrieval
+    newCardElement.dataset.timezone = timezone;
+    newCardElement.dataset.country = country;
+    newCardElement.dataset.countryCode = countryCode;
+    newCardElement.dataset.title = title;
+
+    grid.appendChild(newCardElement);
+
     if (newCardElement) {
         startClockForElement(newCardElement, timezone);
-        
-        // CORRECCIÓN: Lógica de eventos simplificada
-        const menuContainer = newCardElement.querySelector('.card-menu-container');
-        newCardElement.addEventListener('mouseenter', () => {
-            menuContainer?.classList.remove('disabled');
-        });
-        newCardElement.addEventListener('mouseleave', () => {
-            const dropdown = menuContainer?.querySelector('.card-dropdown-menu');
-            if (dropdown?.classList.contains('disabled')) {
-                menuContainer?.classList.add('disabled');
-            }
-        });
-        
-        // La lógica para ABRIR el menú con el botón [data-action="toggle-card-menu"]
-        // ahora es manejada por el listener global en 'general-tools.js'
         
         setTimeout(() => {
             applyTranslationsToSpecificElement(newCardElement);
@@ -425,35 +385,23 @@ function updateClockCard(id, newData) {
     const card = document.getElementById(id);
     if (!card) return;
 
-    trackEvent('interaction', 'edit_clock'); // <-- EVENTO AÑADIDO
+    trackEvent('interaction', 'edit_clock');
 
-    // Actualiza los atributos de datos en el elemento de la tarjeta
     card.setAttribute('data-title', newData.title);
     card.setAttribute('data-country', newData.country);
     card.setAttribute('data-timezone', newData.timezone);
 
-    // Actualiza el título visible en la tarjeta
     const titleElement = card.querySelector('.card-title');
     if (titleElement) {
         titleElement.textContent = newData.title;
         titleElement.setAttribute('title', newData.title);
     }
 
-    // --- INICIO DE LA CORRECCIÓN ---
-
-    // 1. Obtiene la librería de países y zonas horarias.
     const ct = window.ct;
-
-    // 2. Determina el nuevo código de país a partir de la nueva zona horaria.
     const countryForTimezone = ct.getCountryForTimezone(newData.timezone);
     const newCountryCode = countryForTimezone ? countryForTimezone.id : '';
-
-    // 3. Actualiza el atributo 'data-country-code' en el DOM.
     card.setAttribute('data-country-code', newCountryCode);
 
-    // --- FIN DE LA CORRECCIÓN ---
-
-    // Busca y muestra el desplazamiento UTC
     const timezoneObject = countryForTimezone ? ct.getTimezonesForCountry(countryForTimezone.id)?.find(tz => tz.name === newData.timezone) : null;
     const utcOffsetText = timezoneObject ? `UTC ${timezoneObject.utcOffsetStr}` : '';
     const offsetElement = card.querySelector('.card-tag');
@@ -461,18 +409,14 @@ function updateClockCard(id, newData) {
         offsetElement.textContent = utcOffsetText;
     }
 
-    // Reinicia el reloj de la tarjeta con la nueva zona horaria
     startClockForElement(card, newData.timezone);
 
-    // Encuentra y actualiza el reloj en el array de datos
     const clockIndex = userClocks.findIndex(clock => clock.id === id);
     if (clockIndex !== -1) {
-        // 4. Asegúrate de que el 'countryCode' corregido se guarde en el array.
         userClocks[clockIndex] = { ...userClocks[clockIndex], ...newData, countryCode: newCountryCode };
         saveClocksToStorage();
     }
 
-    // Actualiza las traducciones y tooltips si es necesario
     setTimeout(() => {
         applyTranslationsToSpecificElement(card);
         if (window.attachTooltipsToNewElements) {
@@ -480,10 +424,8 @@ function updateClockCard(id, newData) {
         }
     }, 0);
 
-    // Muestra una notificación de éxito
     showDynamicIslandNotification('worldclock', 'updated', 'worldclock_updated', 'notifications', { title: newData.title });
 
-    // Actualiza cualquier widget relacionado en el panel principal
     if (typeof updateEverythingWidgets === 'function') {
         updateEverythingWidgets();
     }
@@ -562,7 +504,7 @@ function pinClock(button) {
 
     const clockId = card.dataset.id;
     if (clockId !== 'local') {
-      trackEvent('interaction', 'pin_clock'); // <-- EVENTO AÑADIDO
+      trackEvent('interaction', 'pin_clock');
     }
 
     const allPinButtons = document.querySelectorAll('.card-action-btn[data-action="pin-clock"]');
@@ -583,7 +525,6 @@ function deleteClock(clockId) {
 
     const clockTitle = card.dataset.title;
 
-    // --- INICIO DE LA CORRECCIÓN ---
     activateModule('overlayContainer');
     setTimeout(() => {
         showModal('confirmation', { type: 'world-clock', name: clockTitle }, () => {
@@ -619,7 +560,6 @@ function deleteClock(clockId) {
             refreshWorldClockSearchResults();
         });
     }, 50);
-    // --- FIN DE LA CORRECCIÓN ---
 }
 function updateMainPinnedDisplay(card) {
     if (mainDisplayInterval) {
