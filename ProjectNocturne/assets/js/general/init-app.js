@@ -272,66 +272,6 @@ const appFunctions = {
     getCurrentTheme: null
 };
 
-function logServiceToolsStatus() {
-    console.groupCollapsed('🌙 ProjectNocturne - Service tools');
-
-    // Alarms
-    if (window.alarmManager) {
-        console.groupCollapsed('Tool: Alarms');
-        const { userAlarms, defaultAlarms } = window.alarmManager.getAllAlarms();
-        if (userAlarms.length === 0 && defaultAlarms.length === 0) {
-            console.log('No alarms found.');
-        } else {
-            userAlarms.forEach(alarm => console.log(`- User: ${alarm.title} (${alarm.hour}:${alarm.minute}) - Enabled: ${alarm.enabled}`));
-            defaultAlarms.forEach(alarm => console.log(`- Default: ${getTranslation(alarm.title, 'alarms')} (${alarm.hour}:${alarm.minute}) - Enabled: ${alarm.enabled}`));
-        }
-        console.groupEnd();
-    }
-
-    // Timers
-    if (window.timerManager) {
-        console.groupCollapsed('Tool: Timers');
-        const { userTimers, defaultTimers } = window.timerManager.getAllTimers();
-        if (userTimers.length === 0 && defaultTimers.length === 0) {
-            console.log('No timers found.');
-        } else {
-            userTimers.forEach(timer => console.log(`- User: ${timer.title} - Remaining: ${formatTime(timer.remaining, timer.type)}`));
-            defaultTimers.forEach(timer => console.log(`- Default: ${getTranslation(timer.title, 'timer')} - Remaining: ${formatTime(timer.remaining, timer.type)}`));
-        }
-        console.groupEnd();
-    }
-
-    // Stopwatch
-    if (window.stopwatchController) {
-        console.groupCollapsed('Tool: Stopwatch');
-        console.log(window.stopwatchController.getStopwatchDetails());
-        console.groupEnd();
-    }
-
-    // World Clock
-    if (window.worldClockManager) {
-        console.groupCollapsed('Tool: World Clock');
-        const clocks = window.worldClockManager.getAllClocks ? window.worldClockManager.getAllClocks() : [];
-        if (clocks.length === 0) {
-            console.log('No world clocks found.');
-        } else {
-            clocks.forEach(clock => console.log(`- ${clock.title} (${clock.timezone})`));
-        }
-        console.groupEnd();
-    }
-
-    console.groupEnd();
-}
-
-function formatTime(ms, type) {
-    if (ms <= 0) return type === 'count_to_date' ? "Event Finished" : "00:00:00";
-    const totalSeconds = Math.floor(ms / 1000);
-    const hours = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
-    const minutes = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
-    const seconds = (totalSeconds % 60).toString().padStart(2, '0');
-    return `${hours}:${minutes}:${seconds}`;
-}
-
 function initApp() {
     if (applicationState.isInitializing) {
         return;
@@ -359,7 +299,6 @@ function initApp() {
             .then(() => {
                 logInitializationComplete();
                 dispatchAppReadyEvent();
-                logServiceToolsStatus();
             })
             .catch(error => {
                 console.error('❌ Error during application initialization sequence:', error);
@@ -391,24 +330,19 @@ function initializeMainComponents() {
     initializeCategorySliderService();
     initializeCentralizedFontManager();
     initializeFullScreenManager();
-    
-    // --- INICIO DE LA CORRECCIÓN ---
-    // Se mueve la inicialización de los listeners de las tarjetas después de que los módulos de herramientas se hayan inicializado.
+    initializeCardEventListeners();
     initColorTextSystem();
     initColorSearchSystem();
     initializeAlarmClock();
     initWorldClock();
     initializeStopwatch();
     initializeTimerController();
-    initializeCardEventListeners(); // <- MOVIMOS ESTA LÍNEA AQUÍ
     initLocationManager();
     setupEventListeners();
     batchMigrateTooltips();
     initializeMobileSidebarTooltips();
     initializeScrollShadow();
-    // --- FIN DE LA CORRECCIÓN ---
 }
-
 
 function finalizeInitialization() {
     applicationState.isReady = true;

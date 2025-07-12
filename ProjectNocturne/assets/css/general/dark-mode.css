@@ -550,6 +550,8 @@
     background-color: #252627;
     border: 1px solid #ffffff20;
     filter: unset;
+}.dark-mode .feedback-text {
+    color: #ffffff;
 }
 
 .dark-mode .tool-card .card-pin-btn,
