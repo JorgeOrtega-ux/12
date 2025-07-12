@@ -57,7 +57,7 @@
                             </div>
                             <div class="menu-content-general">
                                 <div class="custom-text-content">
-                                    <textarea class="feedback-text overflow-y" id="feedback-text" name="feedback_text" rows="5" required></textarea>
+                                    <textarea class="feedback-text overflow-y" id="feedback-text" name="feedback_text" rows="5" required placeholder="" data-translate="write_feedback_message" data-translate-category="menu" data-translate-target="placeholder"></textarea>
                                 </div>
                             </div>
                         </div>
