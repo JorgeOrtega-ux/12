@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="menu-content-scrolleable overflow-y">
-            <div class="menu-section-center">
+            <div class="menu-section-center overflow-y">
                 <div class="menu-list">
                     <div class="menu-link" data-action="select-feedback-type" data-value="improvement" role="option" tabindex="0">
                         <div class="menu-link-icon"><span class="material-symbols-rounded">trending_up</span></div>
