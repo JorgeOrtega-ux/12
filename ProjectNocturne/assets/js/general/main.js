@@ -674,7 +674,12 @@ function handleKeyDown(e) {
                 }
             }
             if (key === 'l') activeSectionElement.querySelector('[data-action="lap"]')?.click();
-            if (key === 'r') activeSectionElement.querySelector('[data-action="reset"]')?.click();
+            if (key === 'r') {
+                const resetBtn = activeSectionElement.querySelector('[data-action="reset"]');
+                if (resetBtn && !resetBtn.classList.contains('disabled-interactive')) {
+                    resetBtn.click();
+                }
+            }
             if (ctrlOrMeta && key === 'c') {
                 e.preventDefault();
                 activeSectionElement.querySelector('[data-action="change-format"]')?.click();
