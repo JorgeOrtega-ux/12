@@ -32,13 +32,13 @@
                         data-translate="add_timer"
                         data-translate-category="tooltips"
                         data-translate-target="tooltip"
-                        data-key-icon="N">
-                        <span class="material-symbols-rounded">add</span>
+                        data-key-icon="A">
+                            <span class="material-symbols-rounded">add</span>
                     </div>
                     <div class="info-tool" data-timer-name-display></div>
                 </div>
             </div>
-                <?php include 'includes/components/tool-options.php'; ?>
+            <?php include 'includes/components/tool-options.php'; ?>
         </div>
     </div>
     <div class="section-center">

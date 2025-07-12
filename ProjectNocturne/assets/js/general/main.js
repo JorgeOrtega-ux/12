@@ -659,8 +659,13 @@ function handleKeyDown(e) {
                     pauseBtn.click();
                 }
             }
-            if (key === 'r') activeSectionElement.querySelector('[data-action="reset-pinned-timer"]')?.click();
-            if (key === 'n') activeSectionElement.querySelector('[data-module="toggleMenuTimer"]')?.click();
+            if (key === 'r') {
+                const resetBtn = activeSectionElement.querySelector('[data-action="reset-pinned-timer"]');
+                if (resetBtn && !resetBtn.classList.contains('disabled-interactive')) {
+                    resetBtn.click();
+                }
+            }
+            if (key === 'a') activeSectionElement.querySelector('[data-module="toggleMenuTimer"]')?.click();
             break;
         case 'stopwatch':
             if (key === ' ') { 
