@@ -100,16 +100,15 @@ export function showModal(type, data = {}, onConfirm = null) {
         onConfirmCallback = onConfirm;
         // Primero activa el módulo para que sea visible
         activateModule('toggleDeleteMenu');
-        // Luego, un pequeño delay para asegurar que el DOM está listo antes de poblarlo
-        setTimeout(() => {
-            populateConfirmationModal(data);
-            setupModalEventListeners();
-        }, 50);
+        // Ejecuta directamente sin delay
+        populateConfirmationModal(data);
+        setupModalEventListeners();
 
     } else if (type === 'feedback') {
         activateModule('toggleFeedbackMenu');
     }
 }
+
 
 export function hideModal() {
     if (activeModalType) {
