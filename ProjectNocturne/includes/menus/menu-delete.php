@@ -17,24 +17,24 @@
         </div>
         <div class="menu-content-scrolleable overflow-y">
             <div class="creation-wrapper active">
-                <div class="menu-section-center overflow-y">
-                    <div class="menu-content-wrapper active">
-                        <div class="menu-content">
-                            <div class="menu-content-header">
-                                <div class="menu-content-header-primary">
-                                    <span class="material-symbols-rounded">label</span>
-                                    <span data-delete-item="item-type-label"></span>
+                    <div class="menu-section-center overflow-y">
+                        <div class="menu-content-wrapper active">
+                            <div class="menu-content">
+                                <div class="menu-content-header">
+                                    <div class="menu-content-header-primary">
+                                        <span class="material-symbols-rounded">label</span>
+                                        <span data-delete-item="item-type-label"></span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="menu-content-general">
-                                <div class="enter-text-tool disabled-interactive">
-                                    <input type="text" data-delete-item="name" disabled>
+                                <div class="menu-content-general">
+                                    <div class="enter-text-tool disabled-interactive">
+                                        <input type="text" data-delete-item="name" disabled>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
         <div class="menu-section-bottom">
             <div class="menu-button-group">

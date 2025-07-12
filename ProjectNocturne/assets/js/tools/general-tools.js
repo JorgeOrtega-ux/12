@@ -8,13 +8,17 @@ const DB_NAME = 'ProjectNocturneDB';
 const DB_VERSION = 1;
 const AUDIO_STORE_NAME = 'user_audio_store';
 
+// --- INICIO DE LA CORRECCIÓN ---
 let db = null;
-let dbPromise = null;
+let dbPromise = null; // Variable para almacenar la promesa de la conexión
+// --- FIN DE LA CORRECCIÓN ---
 
 let isCachePopulated = false;
 let userAudiosCache = [];
 let audioCachePromise = null;
 
+// --- INICIO DE LA CORRECCIÓN ---
+// Se modifica la función openDB para evitar múltiples inicializaciones.
 function openDB() {
     if (dbPromise) {
         return dbPromise;
@@ -42,13 +46,14 @@ function openDB() {
 
         request.onerror = (event) => {
             console.error('Error opening IndexedDB:', event.target.error);
-            dbPromise = null;
+            dbPromise = null; // Resetear la promesa en caso de error para permitir reintentos
             reject('Error opening IndexedDB');
         };
     });
 
     return dbPromise;
 }
+// --- FIN DE LA CORRECCIÓN ---
 
 export function initDB() {
     return openDB();
@@ -139,12 +144,11 @@ async function saveUserAudio(name, fileBlob) {
     return newAudio;
 }
 
-// --- INICIO DE LA CORRECCIÓN ---
 async function deleteUserAudio(audioId, callback) {
     const audioToDelete = userAudiosCache.find(audio => audio.id === audioId);
     if (!audioToDelete) return;
 
-    // Se pasa el tipo 'audio' y el nombre del audio recuperado de la caché.
+    // AHORA LLAMAMOS A showModal CON EL TIPO 'confirmation'
     showModal('confirmation', { type: 'audio', name: audioToDelete.name }, async () => {
         await deleteAudioFromDB(audioId);
         userAudiosCache = userAudiosCache.filter(audio => audio.id !== audioId);
@@ -154,7 +158,6 @@ async function deleteUserAudio(audioId, callback) {
         }
     });
 }
-// --- FIN DE LA CORRECCIÓN ---
 
 
 function replaceDeletedAudioInTools(deletedAudioId, defaultSoundId) {
@@ -386,12 +389,15 @@ function createSoundMenuItem(sound, actionName, activeSoundId, isCustom) {
 
     menuLink.appendChild(menuContainer);
 
+    // --- LÓGICA DE HOVER CORREGIDA ---
     menuLink.addEventListener('mouseenter', () => {
         menuContainer.classList.remove('disabled');
+        // Se añade un marcador para saber que el cursor está encima
         menuLink.dataset.hovering = 'true';
     });
 
     menuLink.addEventListener('mouseleave', () => {
+        // Se elimina el marcador al salir
         delete menuLink.dataset.hovering;
         const isCurrentlyPlaying = (window.getCurrentlyPlayingSoundId && window.getCurrentlyPlayingSoundId() === sound.id);
         if (!isCurrentlyPlaying) {
@@ -401,6 +407,7 @@ function createSoundMenuItem(sound, actionName, activeSoundId, isCustom) {
 
     return menuLink;
 }
+
 export async function handleAudioUpload(callback) {
     await populateAudioCache();
     const uploadLimit = 10;
@@ -659,7 +666,7 @@ export function initializeCentralizedFontManager() {
     }
     function findFontElements() {
         sections.forEach(function processSectionElements(sectionName) {
-            const section = document.querySelector(`[data-section="${sectionName}"]`);
+            const section = document.querySelector(`[data-section="${sectionName}"]`); // <--- CAMBIO AQUÍ
             if (!section) return;
             const clockContainer = section.querySelector('.tool-content');
             const clockElement = section.querySelector(`.tool-${sectionName} span`);
@@ -817,12 +824,14 @@ export function initializeCentralizedFontManager() {
         const element = clockElements[sectionName];
         const display = fontSizeDisplays[sectionName];
         if (!container || !element || !display) return;
+        
+        // CORRECCIÓN: Evitar cálculos si el contenedor está oculto
         if (container.offsetWidth === 0) {
             return;
         }
 
         const baseSize = calculateBaseFontSize(container.offsetWidth);
-        if (baseSize === 0) return;
+        if (baseSize === 0) return; // Evitar división por cero
 
         const calculatedSize = baseSize * globalScaleFactor;
         const finalSize = roundToEvenNumber(calculatedSize);
@@ -869,7 +878,7 @@ export function initializeCentralizedFontManager() {
             const container = clockContainers[sectionName];
             if (container) {
                 const baseSize = calculateBaseFontSize(container.offsetWidth);
-                if (baseSize > 0) {
+                if (baseSize > 0) { // Evitar división por cero
                     globalScaleFactor = targetSize / baseSize;
                     adjustAndApplyFontSizeToAllSections();
                     saveFontScaleToStorage();
@@ -886,7 +895,7 @@ export function initializeCentralizedFontManager() {
             const container = clockContainers[sectionName];
             if (container) {
                 const baseSize = calculateBaseFontSize(container.offsetWidth);
-                if (baseSize > 0) {
+                 if (baseSize > 0) { // Evitar división por cero
                     globalScaleFactor = targetSize / baseSize;
                     adjustAndApplyFontSizeToAllSections();
                     saveFontScaleToStorage();

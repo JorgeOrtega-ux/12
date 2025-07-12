@@ -1,4 +1,4 @@
-// /assets/js/general/menu-interactions.js - CÓDIGO COMPLETO Y CORREGIDO
+// /assets/js/general/menu-interactions.js - CÓDIGO COMPLETO CORRECTO
 
 "use strict";
 import { use24HourFormat, deactivateModule, activateModule } from './main.js';
@@ -13,39 +13,39 @@ import { getCurrentLocation } from './location-manager.js';
 let onConfirmCallback = null;
 let activeModalType = null;
 
+// --- INICIO DE LA MODIFICACIÓN ---
 const CREATION_TIMEOUT = 500;
+// --- FIN DE LA MODIFICACIÓN ---
 
 function populateConfirmationModal(data) {
     const modalMenu = document.querySelector('.menu-delete');
     if (!modalMenu) return;
 
+    // ----- CÓDIGO CORREGIDO: SE CAMBIARON LOS SELECTORES A data-delete-item -----
     const headerTitleElement = modalMenu.querySelector('[data-delete-item="header-title"]');
     const itemTypeLabelElement = modalMenu.querySelector('[data-delete-item="item-type-label"]');
     const itemNameElement = modalMenu.querySelector('[data-delete-item="name"]');
-    const confirmButton = modalMenu.querySelector('.menu-button--danger');
-    const cancelButton = modalMenu.querySelector('.menu-button:not(.menu-button--danger)');
+    // Se elimina la referencia a 'confirmation-message' ya que no existe en el HTML
+    const confirmButton = modalMenu.querySelector('.menu-button--danger'); // Selector más específico
+    const cancelButton = modalMenu.querySelector('.menu-button:not(.menu-button--danger)'); // Selector más específico
 
     if (!headerTitleElement || !itemTypeLabelElement || !itemNameElement || !confirmButton || !cancelButton) {
         console.error("Elementos del modal de confirmación no encontrados. Revisa el HTML.");
         return;
     }
+    // ----- FIN DEL CÓDIGO CORREGIDO -----
 
-    // --- INICIO DE LA CORRECCIÓN CLAVE ---
-    // Se renombra la variable 'name' a 'itemName' para evitar conflictos con la propiedad global 'window.name'.
-    const { type: itemType, name: itemName } = data;
-    // --- FIN DE LA CORRECCIÓN CLAVE ---
+    const { type: itemType, name } = data;
 
     const headerTitleKey = `confirm_delete_title_${itemType}`;
+    const messageKey = `confirm_delete_message_${itemType}`; // Aunque no se usa, lo mantenemos por si se añade en el futuro
     const itemTypeLabelKey = `delete_${itemType}_title_prefix`;
 
     headerTitleElement.textContent = getTranslation(headerTitleKey, 'confirmation');
     itemTypeLabelElement.textContent = getTranslation(itemTypeLabelKey, 'confirmation');
+    itemNameElement.value = name; // El nombre del item se pone en el input
 
-    // --- INICIO DE LA CORRECCIÓN CLAVE ---
-    // Se utiliza la nueva variable 'itemName' para asignar el valor al input.
-    itemNameElement.value = itemName;
-    // --- FIN DE LA CORRECCIÓN CLAVE ---
-
+    // Asignar traducciones a los botones
     confirmButton.querySelector('span').setAttribute('data-translate', 'delete');
     confirmButton.querySelector('span').textContent = getTranslation('delete', 'confirmation');
 
@@ -62,18 +62,28 @@ function setupModalEventListeners() {
     const cancelBtn = deleteMenu.querySelector('.menu-button:not(.menu-button--danger)');
 
     if (confirmBtn) {
+        // Se reemplaza el botón para evitar acumulación de listeners
         const newConfirmBtn = confirmBtn.cloneNode(true);
         confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
 
+        // --- INICIO DE LA MODIFICACIÓN ---
         newConfirmBtn.addEventListener('click', () => {
+            // 1. Añade el spinner y deshabilita el botón
             addSpinnerToCreateButton(newConfirmBtn);
+
+            // 2. Espera el tiempo definido en CREATION_TIMEOUT
             setTimeout(() => {
+                // 3. Ejecuta la función de borrado
                 if (typeof onConfirmCallback === 'function') {
                     onConfirmCallback();
                 }
+                // 4. Cierra el modal de confirmación
                 hideModal();
+                // Nota: No es necesario remover el spinner manualmente,
+                // ya que el menú se oculta y se reiniciará la próxima vez que se abra.
             }, CREATION_TIMEOUT);
         });
+        // --- FIN DE LA MODIFICACIÓN ---
     }
 
     if (cancelBtn) {
@@ -88,9 +98,14 @@ export function showModal(type, data = {}, onConfirm = null) {
 
     if (type === 'confirmation') {
         onConfirmCallback = onConfirm;
-        populateConfirmationModal(data);
-        setupModalEventListeners();
+        // Primero activa el módulo para que sea visible
         activateModule('toggleDeleteMenu');
+        // Luego, un pequeño delay para asegurar que el DOM está listo antes de poblarlo
+        setTimeout(() => {
+            populateConfirmationModal(data);
+            setupModalEventListeners();
+        }, 50);
+
     } else if (type === 'feedback') {
         activateModule('toggleFeedbackMenu');
     }
@@ -191,10 +206,8 @@ function navigateBack() {
 
         const searchInput = currentMenu.querySelector('input[type="text"]');
         if (['sounds', 'country', 'timeZone'].includes(currentMenu.dataset.menu)) {
-            if (searchInput) {
-                searchInput.value = '';
-                searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-            }
+            searchInput.value = '';
+            searchInput.dispatchEvent(new Event('input', { bubbles: true }));
         }
 
         if (currentMenu.dataset.menu === 'timePicker') {
@@ -250,7 +263,7 @@ function getMenuElement(menuName) {
         'timePicker': '.menu-timePicker[data-menu="timePicker"]',
         'timeZone': '.menu-timeZone[data-menu="timeZone"]',
         'menuFeedbackTypes': '.menu-feedback-types[data-menu="feedbackTypes"]',
-        'menuFeedback': '.menu-feedback[data-menu="feedback"]'
+        'menuFeedback': '.menu-feedback[data-menu="feedback"]' // <-- Entrada añadida
     };
     return document.querySelector(menuSelectorMap[menuName]);
 };
@@ -586,7 +599,7 @@ export function prepareWorldClockForEdit(clockData) {
     updateDisplay('#worldclock-selected-country', clockData.country, menuElement);
     const timezoneSelector = menuElement.querySelector('[data-action="open-timezone-menu"]');
     if (timezoneSelector) {
-        timezoneSelector.classList.remove('disabled-interactive');
+        timezoneSelector.classList.remove('disabled-interactive'); // <--- ¡Esta es la línea clave!
     }
     const ct = window.ct;
     const tzObject = ct.getTimezone(clockData.timezone);
@@ -873,7 +886,10 @@ async function populateSoundsMenu(context) {
     } else if (context === 'count_to_date') {
         activeSoundId = state.timer.countTo.sound;
     }
+    // --- INICIO DE LA MODIFICACIÓN ---
+    // Cambiamos el data-action a 'stageSound'
     await generateSoundList(uploadContainer, listContainer, 'stageSound', activeSoundId);
+    // --- FIN DE LA MODIFICACIÓN ---
 }
 
 function setupGlobalEventListeners() {
@@ -1112,11 +1128,11 @@ async function handleMenuClick(event, parentMenu) {
             clearTimeout(soundTimeout);
             if (icon) icon.textContent = 'play_arrow';
             if (menuLink) {
-                menuLink.classList.remove('sound-playing');
-                const menuContainer = menuLink.querySelector('.card-menu-container');
-                if (menuContainer && menuLink.dataset.hovering !== 'true') {
-                    menuContainer.classList.add('disabled');
-                }
+                 menuLink.classList.remove('sound-playing');
+                 const menuContainer = menuLink.querySelector('.card-menu-container');
+                 if (menuContainer) {
+                     menuContainer.classList.add('disabled');
+                 }
             }
             currentlyPlayingSound = null;
         } else {
@@ -1133,7 +1149,7 @@ async function handleMenuClick(event, parentMenu) {
                     if (prevLink) {
                         prevLink.classList.remove('sound-playing');
                         const prevActions = prevLink.querySelector('.card-menu-container');
-                        if (prevActions && prevLink.dataset.hovering !== 'true') {
+                        if (prevActions) {
                             prevActions.classList.add('disabled');
                         }
                     }
@@ -1152,6 +1168,9 @@ async function handleMenuClick(event, parentMenu) {
                     if (icon) icon.textContent = 'play_arrow';
                     if (menuLink) {
                         menuLink.classList.remove('sound-playing');
+                        
+                        // --- LÓGICA CORREGIDA ---
+                        // Solo ocultar el menú si el cursor no está encima.
                         if (menuLink.dataset.hovering !== 'true') {
                             const menuContainer = menuLink.querySelector('.card-menu-container');
                             if (menuContainer) {
@@ -1209,7 +1228,7 @@ async function handleMenuClick(event, parentMenu) {
         case 'back-to-previous-menu':
             navigateBack();
             break;
-        case 'stageSound': {
+        case 'stageSound': { 
             event.stopPropagation();
             const selectedLink = target.closest('.menu-link');
             if (!selectedLink) return;
@@ -1220,7 +1239,7 @@ async function handleMenuClick(event, parentMenu) {
             selectedLink.classList.add('active');
             break;
         }
-        case 'select-audio': {
+        case 'select-audio': { 
             event.stopPropagation();
             const soundsMenu = document.querySelector('.menu-sounds');
             const stagedSoundLink = soundsMenu.querySelector('.menu-link[data-action="stageSound"].active');
@@ -1238,7 +1257,7 @@ async function handleMenuClick(event, parentMenu) {
                     state.timer.countTo.sound = soundId;
                     updateDisplay('#count-to-date-selected-sound', soundName, getMenuElement('menuTimer'));
                 }
-                navigateBack();
+                navigateBack(); 
             }
             break;
         }
@@ -1474,13 +1493,15 @@ async function handleMenuClick(event, parentMenu) {
     }
 }
 function initializeFeedbackForm() {
+    // MODIFICADO: Seleccionar el contenedor principal del menú de feedback
     const feedbackMenu = document.querySelector('.menu-feedback[data-menu="feedback"]');
     if (!feedbackMenu) return;
 
+    // MODIFICADO: El evento ahora es un 'click' en el botón de envío
     const submitButton = feedbackMenu.querySelector('[data-action="submit-feedback-form"]');
     if (!submitButton) return;
 
-    submitButton.addEventListener('click', async function (e) {
+    submitButton.addEventListener('click', async function(e) {
         e.preventDefault();
 
         const messageInput = feedbackMenu.querySelector('#feedback-text');
@@ -1512,6 +1533,7 @@ function initializeFeedbackForm() {
 
         setTimeout(async () => {
             try {
+                // MODIFICADO: Crear FormData manualmente ya que no hay <form>
                 const formData = new FormData();
                 formData.append('feedback_type', typeInput.value);
                 formData.append('email', emailInput.value);
@@ -1530,12 +1552,13 @@ function initializeFeedbackForm() {
 
                 if (result.success) {
                     showDynamicIslandNotification('system', 'success', result.message, 'notifications');
-
+                    
+                    // MODIFICADO: Resetear campos manualmente
                     emailInput.value = '';
                     messageInput.value = '';
                     typeInput.value = 'contact_support';
                     const typeDisplay = feedbackMenu.querySelector('#feedback-type-display');
-                    if (typeDisplay) {
+                    if(typeDisplay) {
                         typeDisplay.setAttribute('data-translate', 'feedback_type_contact_support');
                         typeDisplay.textContent = getTranslation('feedback_type_contact_support', 'menu');
                     }
@@ -1561,6 +1584,7 @@ function initializeFeedbackForm() {
     }
 }
 
+// Asegurarse de que la función se llama al cargar la página
 document.addEventListener('DOMContentLoaded', initializeFeedbackForm);
 
 window.getCurrentlyPlayingSoundId = () => currentlyPlayingSound ? currentlyPlayingSound.id : null;
