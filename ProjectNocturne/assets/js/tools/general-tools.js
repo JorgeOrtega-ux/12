@@ -364,43 +364,41 @@ function createSoundMenuItem(sound, actionName, activeSoundId, isCustom) {
     const soundName = isCustom ? sound.nameKey : getTranslation(sound.nameKey, 'sounds');
     const translationAttrs = isCustom ? '' : `data-translate="${sound.nameKey}" data-translate-category="sounds"`;
 
-    // Contenido principal del link (Icono y Texto)
     menuLink.innerHTML = `
         <div class="menu-link-icon"><span class="material-symbols-rounded">${sound.icon}</span></div>
         <div class="menu-link-text"><span ${translationAttrs}>${soundName}</span></div>
     `;
 
-    // Contenedor para las acciones
     const menuContainer = document.createElement('div');
     menuContainer.className = 'card-menu-container disabled';
 
-    // Botón de Test (Play/Stop)
-    const testButton = document.createElement('button');
-    // Asignar las clases de estilo correctas
-    testButton.className = 'card-pin-btn sound-test-btn'; 
-    testButton.dataset.action = 'test-sound';
-    const isThisSoundPlaying = (window.getCurrentlyPlayingSoundId && window.getCurrentlyPlayingSoundId() === sound.id);
-    testButton.innerHTML = `<span class="material-symbols-rounded">${isThisSoundPlaying ? 'stop' : 'play_arrow'}</span>`;
-    menuContainer.appendChild(testButton);
-
-    // Botón de Eliminar (solo para audios personalizados)
     if (isCustom) {
         const deleteButton = document.createElement('button');
-        // Asignar las clases de estilo correctas
         deleteButton.className = 'card-pin-btn';
         deleteButton.dataset.action = 'delete-user-audio';
         deleteButton.innerHTML = `<span class="material-symbols-rounded">delete</span>`;
         menuContainer.appendChild(deleteButton);
     }
 
+    const testButton = document.createElement('button');
+    testButton.className = 'card-pin-btn sound-test-btn';
+    testButton.dataset.action = 'test-sound';
+    const isThisSoundPlaying = (window.getCurrentlyPlayingSoundId && window.getCurrentlyPlayingSoundId() === sound.id);
+    testButton.innerHTML = `<span class="material-symbols-rounded">${isThisSoundPlaying ? 'stop' : 'play_arrow'}</span>`;
+    menuContainer.appendChild(testButton);
+
     menuLink.appendChild(menuContainer);
 
-    // Lógica para mostrar/ocultar el contenedor al pasar el mouse
+    // --- LÓGICA DE HOVER CORREGIDA ---
     menuLink.addEventListener('mouseenter', () => {
         menuContainer.classList.remove('disabled');
+        // Se añade un marcador para saber que el cursor está encima
+        menuLink.dataset.hovering = 'true';
     });
 
     menuLink.addEventListener('mouseleave', () => {
+        // Se elimina el marcador al salir
+        delete menuLink.dataset.hovering;
         const isCurrentlyPlaying = (window.getCurrentlyPlayingSoundId && window.getCurrentlyPlayingSoundId() === sound.id);
         if (!isCurrentlyPlaying) {
             menuContainer.classList.add('disabled');

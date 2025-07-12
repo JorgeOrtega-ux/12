@@ -1127,7 +1127,13 @@ async function handleMenuClick(event, parentMenu) {
             stopSound();
             clearTimeout(soundTimeout);
             if (icon) icon.textContent = 'play_arrow';
-            if (menuLink) menuLink.classList.remove('sound-playing');
+            if (menuLink) {
+                 menuLink.classList.remove('sound-playing');
+                 const menuContainer = menuLink.querySelector('.card-menu-container');
+                 if (menuContainer) {
+                     menuContainer.classList.add('disabled');
+                 }
+            }
             currentlyPlayingSound = null;
         } else {
             if (currentlyPlayingSound) {
@@ -1142,10 +1148,9 @@ async function handleMenuClick(event, parentMenu) {
                     const prevLink = prevButton.closest('.menu-link');
                     if (prevLink) {
                         prevLink.classList.remove('sound-playing');
-                        const prevActions = prevLink.querySelector('.menu-link-actions-container');
+                        const prevActions = prevLink.querySelector('.card-menu-container');
                         if (prevActions) {
                             prevActions.classList.add('disabled');
-                            prevActions.classList.remove('active');
                         }
                     }
                 }
@@ -1163,10 +1168,14 @@ async function handleMenuClick(event, parentMenu) {
                     if (icon) icon.textContent = 'play_arrow';
                     if (menuLink) {
                         menuLink.classList.remove('sound-playing');
-                        const actionsContainer = menuLink.querySelector('.menu-link-actions-container');
-                        if (actionsContainer) {
-                            actionsContainer.classList.add('disabled');
-                            actionsContainer.classList.remove('active');
+                        
+                        // --- LÓGICA CORREGIDA ---
+                        // Solo ocultar el menú si el cursor no está encima.
+                        if (menuLink.dataset.hovering !== 'true') {
+                            const menuContainer = menuLink.querySelector('.card-menu-container');
+                            if (menuContainer) {
+                                menuContainer.classList.add('disabled');
+                            }
                         }
                     }
 
@@ -1219,21 +1228,18 @@ async function handleMenuClick(event, parentMenu) {
         case 'back-to-previous-menu':
             navigateBack();
             break;
-        // --- INICIO DE LA MODIFICACIÓN ---
-        case 'stageSound': { // Nueva acción para marcar un sonido como preseleccionado
+        case 'stageSound': { 
             event.stopPropagation();
             const selectedLink = target.closest('.menu-link');
             if (!selectedLink) return;
 
-            // Quitar la clase 'active' de cualquier otro link
             const allLinks = parentMenu.querySelectorAll('.menu-link[data-action="stageSound"]');
             allLinks.forEach(link => link.classList.remove('active'));
 
-            // Añadir la clase 'active' al link clickeado
             selectedLink.classList.add('active');
             break;
         }
-        case 'select-audio': { // Acción para el nuevo botón "Seleccionar audio"
+        case 'select-audio': { 
             event.stopPropagation();
             const soundsMenu = document.querySelector('.menu-sounds');
             const stagedSoundLink = soundsMenu.querySelector('.menu-link[data-action="stageSound"].active');
@@ -1251,11 +1257,10 @@ async function handleMenuClick(event, parentMenu) {
                     state.timer.countTo.sound = soundId;
                     updateDisplay('#count-to-date-selected-sound', soundName, getMenuElement('menuTimer'));
                 }
-                navigateBack(); // Volver al menú anterior después de seleccionar
+                navigateBack(); 
             }
             break;
         }
-        // --- FIN DE LA MODIFICACIÓN ---
         case 'selectCountry':
             event.stopPropagation();
             const countryCode = target.closest('.menu-link').getAttribute('data-country-code');
