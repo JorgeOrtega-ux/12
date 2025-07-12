@@ -686,7 +686,8 @@ window.worldClockManager = {
     deleteClock,
     handleEditClock,
     getClockCount,
-    getClockLimit
+    getClockLimit,
+    getAllClocks: () => userClocks
 };
 
 export function initWorldClock() {
