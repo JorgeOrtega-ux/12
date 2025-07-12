@@ -44,7 +44,6 @@ function clearRangAtTag(timerId) {
     const timer = findTimerById(timerId);
     if (!timer || !timer.rangAt) return;
 
-    console.log(`🧹 Limpiando tag "sonó hace..." del timer ${timerId}`);
     delete timer.rangAt;
     
     const isUserTimer = userTimers.some(t => t.id === timerId);
@@ -130,8 +129,6 @@ function getTimerControlsState(timer) {
 // ========== RESTAURACIÓN INTELIGENTE AL CARGAR - CORREGIDA ==========
 
 function loadAndRestoreTimers() {
-    console.log('🔄 Iniciando carga y restauración de timers...');
-    
     const lastVisit = localStorage.getItem(LAST_VISIT_KEY);
     const lastVisitTime = lastVisit ? parseInt(lastVisit, 10) : null;
     
@@ -162,15 +159,12 @@ function loadAndRestoreTimers() {
     const allTimers = [...userTimers, ...defaultTimersState];
     const now = Date.now();
 
-    console.log(`⏰ Procesando ${allTimers.length} timers para restauración...`);
-
     // ========== RESTAURACIÓN INTELIGENTE MEJORADA ==========
     if (lastVisitTime) {
         allTimers.forEach(timer => {
             if (timer.type === 'countdown') {
                 if (timer.isRinging) {
                     // ========== TIMER ESTABA SONANDO AL CERRAR WEB ==========
-                    console.log(`🔧 RESTAURACIÓN: Timer ${timer.id} estaba sonando cuando se cerró la web`);
                     
                     // ===== ESTRATEGIA MEJORADA PARA CALCULAR CUÁNDO SONÓ =====
                     let whenItRang = now; // fallback final
@@ -178,17 +172,12 @@ function loadAndRestoreTimers() {
                     if (timer.targetTime) {
                         // Caso 1: Tenemos targetTime (momento exacto cuando debía terminar)
                         whenItRang = timer.targetTime;
-                        console.log(`   - Usando targetTime: ${new Date(timer.targetTime).toLocaleString()}`);
                     } else if (timer.lastTriggered) {
                         // Caso 2: Tenemos lastTriggered (cuando se activó la alarma de sonido)
                         whenItRang = timer.lastTriggered;
-                        console.log(`   - Usando lastTriggered: ${new Date(timer.lastTriggered).toLocaleString()}`);
                     } else {
                         // ========== CASO 3: CALCULARLO BASÁNDOSE EN LA DURACIÓN DEL TIMER ==========
                         // Esta es la estrategia clave que faltaba para los timers
-                        console.log(`   - Calculando basándose en duración del timer`);
-                        console.log(`   - Timer initialDuration: ${timer.initialDuration}ms`);
-                        console.log(`   - Timer remaining en estado guardado: ${timer.remaining}ms`);
                         
                         // Si el timer estaba sonando, significa que remaining debería ser 0
                         // y targetTime debería ser aproximadamente el momento cuando sonó
@@ -205,8 +194,6 @@ function loadAndRestoreTimers() {
                             // Si remaining era 0 cuando se guardó, entonces sonó cuando remaining llegó a 0
                             whenItRang = now - Math.min(timeSinceLastVisit / 2, 300000); // Máximo 5 minutos atrás
                         }
-                        
-                        console.log(`   - Tiempo calculado de sonido: ${new Date(whenItRang).toLocaleString()}`);
                     }
                     
                     timer.rangAt = whenItRang;
@@ -216,14 +203,11 @@ function loadAndRestoreTimers() {
                     delete timer.targetTime;
                     delete timer.lastTriggered; // Limpiar para evitar confusión futura
                     
-                    console.log(`   ✅ Timer restaurado con tag offline: rangAt=${new Date(timer.rangAt).toLocaleString()}`);
-                    
                 } else if (timer.isRunning && timer.targetTime) {
                     const timeWhenFinished = timer.targetTime;
                     
                     if (now >= timeWhenFinished) {
                         // ========== TIMER TERMINÓ MIENTRAS WEB ESTABA CERRADA ==========
-                        console.log(`🔧 RESTAURACIÓN: Timer ${timer.id} terminó mientras la web estaba cerrada`);
                         
                         // ===== AQUÍ ESTÁ LA CORRECCIÓN CLAVE =====
                         // Usar targetTime directamente como el momento exacto cuando sonó
@@ -234,9 +218,6 @@ function loadAndRestoreTimers() {
                         delete timer.targetTime;
                         delete timer.lastTriggered;
                         
-                        console.log(`   ✅ Timer restaurado con tag offline: rangAt=${new Date(timer.rangAt).toLocaleString()}`);
-                        console.log(`   ⏰ Tiempo transcurrido desde que sonó: ${formatTimeSince(timer.rangAt)}`);
-                        
                     } else {
                         // Timer aún corriendo normalmente - asegurar que remaining no sea negativo
                         const rawRemaining = timeWhenFinished - now;
@@ -246,7 +227,6 @@ function loadAndRestoreTimers() {
                     }
                 } else if (timer.remaining <= 0 && !timer.rangAt) {
                     // ========== TIMER EN 00:00:00 SIN CONTEXTO ==========
-                    console.log(`🔧 RESTAURACIÓN: Timer ${timer.id} estaba en 00:00:00 - calculando cuándo sonó`);
                     
                     // ===== CÁLCULO MÁS PRECISO PARA TIMERS EN 00:00:00 =====
                     timer.remaining = timer.initialDuration;
@@ -269,8 +249,6 @@ function loadAndRestoreTimers() {
                     } else {
                         timer.rangAt = now - (60 * 1000); // Hace 1 minuto por defecto
                     }
-                    
-                    console.log(`   ✅ Timer restaurado con tag offline estimado: rangAt=${new Date(timer.rangAt).toLocaleString()}`);
                 }
             } else if (timer.type === 'count_to_date' && timer.isRunning) {
                 const rawRemaining = new Date(timer.targetDate).getTime() - now;
@@ -297,8 +275,6 @@ function loadAndRestoreTimers() {
 
     saveAllTimersState();
     updateMainControlsState();
-    
-    console.log('✅ Carga y restauración de timers completada');
 }
 
 // ========== FUNCIONES PRINCIPALES ==========
@@ -306,8 +282,6 @@ function loadAndRestoreTimers() {
 function startTimer(timerId) {
     const timer = findTimerById(timerId);
     if (!timer || timer.isRunning || (timer.remaining <= 0 && !timer.rangAt)) return;
-
-    console.log(`▶️ Iniciando timer ${timerId}`);
 
     trackEvent('interaction', 'start_timer'); // <-- EVENTO AÑADIDO
 
@@ -367,7 +341,6 @@ function resetTimer(timerId) {
     const timer = findTimerById(timerId);
     if (!timer) return;
 
-    console.log(`🔄 Reseteando timer ${timerId}`);
     trackEvent('interaction', 'reset_timer'); // <-- EVENTO AÑADIDO
 
     timer.isRunning = false;
@@ -395,7 +368,6 @@ function resetTimer(timerId) {
 }
 
 export function updateTimer(timerId, newData) {
-    console.log(`✏️ Editando timer ${timerId}`);
     trackEvent('interaction', 'edit_timer'); // <-- EVENTO AÑADIDO
     
     const timerIndex = userTimers.findIndex(t => t.id === timerId);
@@ -444,8 +416,6 @@ function updateTimerCardVisuals(timer) {
     const card = document.getElementById(timer.id);
     if (!card) return;
 
-    console.log(`🎨 Actualizando visuales del timer ${timer.id}, rangAt: ${timer.rangAt ? 'SÍ' : 'NO'}`);
-
     const titleElement = card.querySelector('.card-title');
     if (titleElement) {
         const isDefault = timer.id.startsWith('default-timer-');
@@ -476,10 +446,8 @@ function updateTimerCardVisuals(timer) {
         }
         const timeAgo = formatTimeSince(timer.rangAt);
         rangAgoTag.textContent = getTranslation('rang_ago', 'timer').replace('{time}', timeAgo);
-        console.log(`   📌 Tag "sonó hace..." añadido: ${timeAgo}`);
     } else if (rangAgoTag) {
         rangAgoTag.remove();
-        console.log(`   🗑️ Tag "sonó hace..." eliminado`);
     }
 
     // Actualizar clase de timer terminado
@@ -525,8 +493,6 @@ function updateTimerCardControls(timerId) {
         if (editLink) editLink.classList.toggle('disabled-interactive', controlsState.editDisabled);
         if (deleteLink) deleteLink.classList.toggle('disabled-interactive', controlsState.deleteDisabled);
     });
-
-    console.log(`🎛️ Controles actualizados para timer ${timerId}: running=${controlsState.isRunning}, ringing=${controlsState.isRinging}, rangAt=${controlsState.hasRangAt}`);
 }
 
 function updateMainControlsState() {
@@ -553,7 +519,6 @@ function updateMainControlsState() {
         pauseBtn.classList.toggle('disabled-interactive', controlsState.pauseDisabled);
         resetBtn.classList.toggle('disabled-interactive', controlsState.resetDisabled);
         
-        console.log(`🎛️ Main controls for ${pinnedTimer.id}: start=${controlsState.startDisabled}, pause=${controlsState.pauseDisabled}, reset=${controlsState.resetDisabled}`);
     } else {
         // No pinned timer or count-to-date timer
         startBtn.classList.add('disabled-interactive');
@@ -877,7 +842,6 @@ function handleTimerEnd(timerId) {
     let soundToPlay = timer.sound;
     const availableSounds = getAvailableSounds();
     if (!availableSounds.some(s => s.id === soundToPlay)) {
-        console.warn(`Audio "${soundToPlay}" not found for timer "${timer.title}". Reverting to default.`);
         soundToPlay = 'classic_beep';
         timer.sound = soundToPlay;
         updateTimer(timer.id, { sound: soundToPlay });
@@ -1293,7 +1257,6 @@ function handlePinTimer(timerId) {
 }
 
 function handleEditTimer(timerId) {
-    console.log(`✏️ Preparando edición del timer ${timerId}`);
     
     const timerData = findTimerById(timerId);
     if (timerData) {
@@ -1316,7 +1279,6 @@ function handleEditTimer(timerId) {
 
 function handleDeleteTimer(timerId) {
     if (timerId.startsWith('default-timer-')) {
-        console.warn(`Deletion of default timer ${timerId} is not allowed.`);
         return;
     }
 

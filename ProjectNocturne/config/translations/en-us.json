@@ -255,6 +255,7 @@
     "appearance": "Appearance",
     "dark_theme": "Dark Theme",
     "email": "Email",
+    "email_placeholder": "name@example.com",
     "english_us": "English (United States)",
     "french_fr": "Français (France)",
     "language": "Language",

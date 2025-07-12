@@ -39,7 +39,6 @@ function clearRangAtTag(alarmId) {
     const alarm = findAlarmById(alarmId);
     if (!alarm || !alarm.rangAt) return;
 
-    console.log(`🧹 Limpiando tag "sonó hace..." de la alarma ${alarmId}`);
     delete alarm.rangAt;
     
     const isUserAlarm = userAlarms.some(a => a.id === alarmId);
@@ -108,8 +107,6 @@ function startClock() {
 }
 
 function loadAndRestoreAlarms() {
-    console.log('🔄 Iniciando carga y restauración de alarmas...');
-    
     const lastVisit = localStorage.getItem(LAST_VISIT_KEY);
     const lastVisitTime = lastVisit ? parseInt(lastVisit, 10) : null;
 
@@ -133,19 +130,15 @@ function loadAndRestoreAlarms() {
 
     if (lastVisitTime) {
         const now = Date.now();
-        console.log(`⏰ Analizando alarmas para restauración desde ${new Date(lastVisitTime).toLocaleString()}`);
         
         [...userAlarms, ...defaultAlarmsState].forEach(alarm => {
             alarm.type = alarm.id.startsWith('default-') ? 'default' : 'user';
 
             if (alarm.isRinging) {
-                console.log(`🔧 RESTAURACIÓN: Alarma ${alarm.id} estaba sonando cuando se cerró la web`);
-                
                 let whenItRang = now;
                 
                 if (alarm.lastTriggered) {
                     whenItRang = alarm.lastTriggered;
-                    console.log(`   - Usando lastTriggered: ${new Date(alarm.lastTriggered).toLocaleString()}`);
                 } else {
                     const todayAlarmTime = new Date();
                     todayAlarmTime.setHours(alarm.hour, alarm.minute, 0, 0);
@@ -157,13 +150,11 @@ function loadAndRestoreAlarms() {
                         yesterdayAlarmTime.setDate(yesterdayAlarmTime.getDate() - 1);
                         whenItRang = yesterdayAlarmTime.getTime();
                     }
-                    console.log(`   - Estimando por horario programado: ${new Date(whenItRang).toLocaleString()}`);
                 }
                 
                 alarm.rangAt = whenItRang;
                 alarm.isRinging = false;
                 alarm.enabled = false;
-                console.log(`   ✅ Restaurada con tag offline: rangAt=${new Date(alarm.rangAt).toLocaleString()}`);
                 
             } else if (alarm.enabled) {
                 const todayAlarmTime = new Date();
@@ -181,10 +172,8 @@ function loadAndRestoreAlarms() {
                 const wasCreatedBeforeRing = lastExpectedRingTime > creationTime;
                 
                 if (shouldHaveRung && wasCreatedBeforeRing) {
-                    console.log(`🔧 RESTAURACIÓN: Alarma ${alarm.id} debió sonar offline`);
                     alarm.rangAt = lastExpectedRingTime.getTime();
                     alarm.enabled = false;
-                    console.log(`   ✅ Restaurada con tag offline: rangAt=${new Date(alarm.rangAt).toLocaleString()}`);
                 }
             }
         });
@@ -192,7 +181,6 @@ function loadAndRestoreAlarms() {
 
     saveAlarmsToStorage();
     saveDefaultAlarmsOrder();
-    console.log('✅ Carga y restauración de alarmas completada');
 }
 
 // ========== FUNCIONES PRINCIPALES ==========
@@ -200,8 +188,6 @@ function loadAndRestoreAlarms() {
 function toggleAlarm(alarmId) {
     const alarm = findAlarmById(alarmId);
     if (!alarm) return;
-    
-    console.log(`🔄 Toggleando alarma ${alarmId}, estado actual: ${alarm.enabled}`);
     
     alarm.enabled = !alarm.enabled;
     
@@ -225,8 +211,6 @@ function updateAlarm(alarmId, newData) {
     const alarm = findAlarmById(alarmId);
     if (!alarm) return;
     
-    console.log(`✏️ Editando alarma ${alarmId}`);
-    
     Object.assign(alarm, newData);
     clearRangAtTag(alarmId);
     
@@ -246,8 +230,6 @@ function updateAlarm(alarmId, newData) {
 function updateAlarmCardVisuals(alarm) {
     const card = document.getElementById(alarm.id);
     if (!card) return;
-
-    console.log(`🎨 Actualizando visuales de la alarma ${alarm.id}, rangAt: ${alarm.rangAt ? 'SÍ' : 'NO'}`);
 
     const title = card.querySelector('.card-title');
     const time = card.querySelector('.card-value');
@@ -283,10 +265,8 @@ function updateAlarmCardVisuals(alarm) {
         }
         const timeAgo = formatTimeSince(alarm.rangAt);
         rangAgoTag.textContent = getTranslation('rang_ago', 'timer').replace('{time}', timeAgo);
-        console.log(`   📌 Tag "sonó hace..." añadido: ${timeAgo}`);
     } else if (rangAgoTag) {
         rangAgoTag.remove();
-        console.log(`   🗑️ Tag "sonó hace..." eliminado`);
     }
 
     card.classList.toggle('alarm-disabled', !alarm.enabled);
@@ -327,8 +307,6 @@ function updateAlarmControlsState() {
                     break;
             }
         });
-        
-        console.log(`🎛️ Controles actualizados para alarma ${alarm.id}: ringing=${controlsState.isRinging}, enabled=${controlsState.isEnabled}, rangAt=${controlsState.hasRangAt}`);
     });
 }
 
@@ -336,7 +314,6 @@ function triggerAlarm(alarm) {
     let soundToPlay = alarm.sound;
     const availableSounds = getAvailableSounds();
     if (!availableSounds.some(s => s.id === soundToPlay)) {
-        console.warn(`Audio "${soundToPlay}" not found for alarm "${alarm.title}". Reverting to default.`);
         soundToPlay = 'classic_beep';
         alarm.sound = soundToPlay;
         updateAlarm(alarm.id, { sound: soundToPlay });
@@ -384,8 +361,6 @@ function dismissAlarm(alarmId) {
 
     const alarm = findAlarmById(alarmId);
     if (!alarm) return;
-
-    console.log(`🔕 Descartando alarma ${alarmId} - NO generar tag (usuario se enteró del sonido)`);
 
     alarm.isRinging = false;
     delete alarm.rangAt;
@@ -750,7 +725,6 @@ function deleteAlarm(alarmId) {
     const alarm = findAlarmById(alarmId);
     if (!alarm) return;
     if (alarm.type === 'default') {
-        console.warn(`Attempted to delete default alarm: ${alarmId}. Deletion is not allowed for default alarms.`);
         return;
     }
 
@@ -796,7 +770,6 @@ function loadDefaultAlarmsOrder() {
                 }
             });
         } catch (error) {
-            console.warn('Error loading default alarms order:', error);
             defaultAlarmsState = JSON.parse(JSON.stringify(DEFAULT_ALARMS));
         }
     } else {

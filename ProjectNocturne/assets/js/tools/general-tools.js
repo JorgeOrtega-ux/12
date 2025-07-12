@@ -36,7 +36,6 @@ function openDB() {
 
         request.onsuccess = (event) => {
             db = event.target.result;
-            console.log('✅ IndexedDB database opened successfully.');
             resolve(db);
         };
 
@@ -111,7 +110,6 @@ async function populateAudioCache() {
         try {
             userAudiosCache = await getAllAudiosFromDB();
             isCachePopulated = true;
-            console.log('🔊 Audio cache populated on startup.');
         } catch (error) {
             console.error('Failed to populate audio cache:', error);
             isCachePopulated = false;

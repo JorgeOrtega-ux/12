@@ -24,7 +24,7 @@
                             </div>
                             <div class="menu-content-general">
                                 <div class="enter-text-tool">
-                                    <input type="email" id="feedback-email" name="email" placeholder="tucorreo@ejemplo.com" required>
+                                    <input type="email" id="feedback-email" name="email" placeholder="" required data-translate="email_placeholder" data-translate-category="menu" data-translate-target="placeholder">
                                 </div>
                             </div>
                         </div>
