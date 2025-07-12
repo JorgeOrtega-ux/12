@@ -1,3 +1,5 @@
+// assets/js/tools/worldClock-controller.js
+
 import { use24HourFormat, activateModule, getCurrentActiveOverlay, allowCardMovement } from '../general/main.js';
 import { prepareWorldClockForEdit } from '../general/menu-interactions.js';
 import { updateZoneInfo } from '../config/zoneinfo-controller.js';
@@ -72,29 +74,27 @@ function createWorldClockSearchResultItem(clock) {
             <span class="result-time">${clock.country}</span>
         </div>
         <div class="card-menu-container disabled">
-             <button class="card-pin-btn" data-action="pin-clock" data-translate="pin_clock" data-translate-category="tooltips" data-translate-target="tooltip">
+             <button class="card-action-btn" data-action="pin-clock" data-translate="pin_clock" data-translate-category="tooltips" data-translate-target="tooltip">
                  <span class="material-symbols-rounded">push_pin</span>
              </button>
-             <div class="card-menu-btn-wrapper">
-                 <button class="card-menu-btn" data-action="toggle-item-menu" data-translate="options" data-translate-category="world_clock_options" data-translate-target="tooltip">
-                     <span class="material-symbols-rounded">more_horiz</span>
-                 </button>
-                 <div class="card-dropdown-menu body-title disabled">
-                     <div class="menu-link" data-action="edit-clock">
-                         <div class="menu-link-icon"><span class="material-symbols-rounded">edit</span></div>
-                         <div class="menu-link-text">
-                             <span data-translate="edit_clock"
-                                      data-translate-category="world_clock_options"
-                                      data-translate-target="text">${editText}</span>
-                         </div>
+             <button class="card-action-btn" data-action="toggle-item-menu" data-translate="options" data-translate-category="world_clock_options" data-translate-target="tooltip">
+                 <span class="material-symbols-rounded">more_horiz</span>
+             </button>
+             <div class="card-dropdown-menu body-title disabled">
+                 <div class="menu-link" data-action="edit-clock">
+                     <div class="menu-link-icon"><span class="material-symbols-rounded">edit</span></div>
+                     <div class="menu-link-text">
+                         <span data-translate="edit_clock"
+                                  data-translate-category="world_clock_options"
+                                  data-translate-target="text">${editText}</span>
                      </div>
-                     <div class="menu-link" data-action="delete-clock">
-                         <div class="menu-link-icon"><span class="material-symbols-rounded">delete</span></div>
-                         <div class="menu-link-text">
-                             <span data-translate="delete_clock"
-                                      data-translate-category="world_clock_options"
-                                      data-translate-target="text">${deleteText}</span>
-                         </div>
+                 </div>
+                 <div class="menu-link" data-action="delete-clock">
+                     <div class="menu-link-icon"><span class="material-symbols-rounded">delete</span></div>
+                     <div class="menu-link-text">
+                         <span data-translate="delete_clock"
+                                  data-translate-category="world_clock_options"
+                                  data-translate-target="text">${deleteText}</span>
                      </div>
                  </div>
              </div>
@@ -279,7 +279,7 @@ function createLocalClockCardAndAppend() {
                 </div>
             </div>
             <div class="card-menu-container disabled">
-                <button class="card-pin-btn active" data-action="pin-clock"
+                <button class="card-action-btn active" data-action="pin-clock"
                         data-translate="pin_clock"
                         data-translate-category="tooltips"
                         data-translate-target="tooltip">
@@ -327,12 +327,15 @@ function createAndStartClockCard(title, country, timezone, existingId = null, sa
         return;
     }
     if (save) {
-        trackEvent('interaction', 'create_clock'); // <-- EVENTO AÑADIDO
+        trackEvent('interaction', 'create_clock');
     }
     const ct = window.ct;
     const countryForTimezone = ct.getCountryForTimezone(timezone);
     const timezoneObject = countryForTimezone ? ct.getTimezonesForCountry(countryForTimezone.id)?.find(tz => tz.name === timezone) : null;
-    const utcOffsetText = timezoneObject ? `UTC ${timezoneObject.utcOffsetStr}` : '';
+    
+    // CORRECCIÓN: Se utiliza 'timezoneObject' en lugar de 'tzObject'
+    const utcOffsetText = timezoneObject ? `UTC ${timezoneObject.utcOffsetStr}` : ''; 
+    
     const countryCode = countryForTimezone ? countryForTimezone.id : '';
     const cardId = existingId || `clock-card-${Date.now()}`;
     const cardHTML = `
@@ -349,38 +352,36 @@ function createAndStartClockCard(title, country, timezone, existingId = null, sa
                 </div>
             </div>
             <div class="card-menu-container disabled">
-                 <button class="card-pin-btn" data-action="pin-clock"
+                 <button class="card-action-btn" data-action="pin-clock"
                         data-translate="pin_clock"
                         data-translate-category="tooltips"
                         data-translate-target="tooltip">
                     <span class="material-symbols-rounded">push_pin</span>
-                </button>
-                <div class="card-menu-btn-wrapper">
-                    <button class="card-menu-btn" data-action="toggle-card-menu"
-                            data-translate="options"
-                            data-translate-category="world_clock_options"
-                            data-translate-target="tooltip">
-                        <span class="material-symbols-rounded">more_horiz</span>
-                    </button>
-                    <div class="card-dropdown-menu disabled body-title">
-                        <div class="menu-link" data-action="edit-clock">
-                            <div class="menu-link-icon"><span class="material-symbols-rounded">edit</span></div>
-                            <div class="menu-link-text">
-                                <span data-translate="edit_clock"
-                                      data-translate-category="world_clock_options"
-                                      data-translate-target="text">Edit clock</span>
-                            </div>
-                        </div>
-                        <div class="menu-link" data-action="delete-clock">
-                            <div class="menu-link-icon"><span class="material-symbols-rounded">delete</span></div>
-                            <div class="menu-link-text">
-                                <span data-translate="delete_clock"
-                                      data-translate-category="world_clock_options"
-                                      data-translate-target="text">Delete clock</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                 </button>
+                 <button class="card-action-btn" data-action="toggle-card-menu"
+                         data-translate="options"
+                         data-translate-category="world_clock_options"
+                         data-translate-target="tooltip">
+                     <span class="material-symbols-rounded">more_horiz</span>
+                 </button>
+                 <div class="card-dropdown-menu disabled body-title">
+                     <div class="menu-link" data-action="edit-clock">
+                         <div class="menu-link-icon"><span class="material-symbols-rounded">edit</span></div>
+                         <div class="menu-link-text">
+                             <span data-translate="edit_clock"
+                                   data-translate-category="world_clock_options"
+                                   data-translate-target="text">Edit clock</span>
+                         </div>
+                     </div>
+                     <div class="menu-link" data-action="delete-clock">
+                         <div class="menu-link-icon"><span class="material-symbols-rounded">delete</span></div>
+                         <div class="menu-link-text">
+                             <span data-translate="delete_clock"
+                                   data-translate-category="world_clock_options"
+                                   data-translate-target="text">Delete clock</span>
+                         </div>
+                     </div>
+                 </div>
             </div>
         </div>
     `;
@@ -388,6 +389,8 @@ function createAndStartClockCard(title, country, timezone, existingId = null, sa
     const newCardElement = document.getElementById(cardId);
     if (newCardElement) {
         startClockForElement(newCardElement, timezone);
+        
+        // CORRECCIÓN: Lógica de eventos simplificada
         const menuContainer = newCardElement.querySelector('.card-menu-container');
         newCardElement.addEventListener('mouseenter', () => {
             menuContainer?.classList.remove('disabled');
@@ -398,6 +401,10 @@ function createAndStartClockCard(title, country, timezone, existingId = null, sa
                 menuContainer?.classList.add('disabled');
             }
         });
+        
+        // La lógica para ABRIR el menú con el botón [data-action="toggle-card-menu"]
+        // ahora es manejada por el listener global en 'general-tools.js'
+        
         setTimeout(() => {
             applyTranslationsToSpecificElement(newCardElement);
             if (window.attachTooltipsToNewElements) {
@@ -448,7 +455,7 @@ function updateClockCard(id, newData) {
 
     // Busca y muestra el desplazamiento UTC
     const timezoneObject = countryForTimezone ? ct.getTimezonesForCountry(countryForTimezone.id)?.find(tz => tz.name === newData.timezone) : null;
-    const utcOffsetText = timezoneObject ? `UTC ${tzObject.utcOffsetStr}` : '';
+    const utcOffsetText = timezoneObject ? `UTC ${timezoneObject.utcOffsetStr}` : '';
     const offsetElement = card.querySelector('.card-tag');
     if (offsetElement) {
         offsetElement.textContent = utcOffsetText;
@@ -517,7 +524,7 @@ function initializeLocalClock() {
         }
     });
     startClockForElement(localClockCard, localTimezone);
-    const localPinBtn = localClockCard.querySelector('.card-pin-btn');
+    const localPinBtn = localClockCard.querySelector('.card-action-btn');
     pinClock(localPinBtn);
 }
 function updateLocalClockTranslation() {
@@ -558,10 +565,10 @@ function pinClock(button) {
       trackEvent('interaction', 'pin_clock'); // <-- EVENTO AÑADIDO
     }
 
-    const allPinButtons = document.querySelectorAll('.card-pin-btn');
+    const allPinButtons = document.querySelectorAll('.card-action-btn[data-action="pin-clock"]');
     allPinButtons.forEach(btn => btn.classList.remove('active'));
     
-    const mainCardPinBtn = document.querySelector(`.tool-card[data-id="${clockId}"] .card-pin-btn`);
+    const mainCardPinBtn = document.querySelector(`.tool-card[data-id="${clockId}"] .card-action-btn[data-action="pin-clock"]`);
     if (mainCardPinBtn) mainCardPinBtn.classList.add('active');
     button.classList.add('active');
     const timezone = card.dataset.timezone || userClocks.find(c => c.id === clockId)?.timezone;
@@ -581,7 +588,7 @@ function deleteClock(clockId) {
     setTimeout(() => {
         showModal('confirmation', { type: 'world-clock', name: clockTitle }, () => {
             trackEvent('interaction', 'delete_clock');
-            const isPinned = card.querySelector('.card-pin-btn.active');
+            const isPinned = card.querySelector('.card-action-btn.active');
 
             if (clockIntervals.has(card)) {
                 clearInterval(clockIntervals.get(card));
@@ -597,7 +604,7 @@ function deleteClock(clockId) {
 
             if (isPinned) {
                 const localClockCard = document.querySelector('.local-clock-card');
-                const localPinBtn = localClockCard.querySelector('.card-pin-btn');
+                const localPinBtn = localClockCard.querySelector('.card-action-btn');
                 pinClock(localPinBtn);
             }
 

@@ -373,14 +373,14 @@ function createSoundMenuItem(sound, actionName, activeSoundId, isCustom) {
 
     if (isCustom) {
         const deleteButton = document.createElement('button');
-        deleteButton.className = 'card-pin-btn';
+        deleteButton.className = 'card-action-btn';
         deleteButton.dataset.action = 'delete-user-audio';
         deleteButton.innerHTML = `<span class="material-symbols-rounded">delete</span>`;
         menuContainer.appendChild(deleteButton);
     }
 
     const testButton = document.createElement('button');
-    testButton.className = 'card-pin-btn sound-test-btn';
+    testButton.className = 'card-action-btn sound-test-btn';
     testButton.dataset.action = 'test-sound';
     const isThisSoundPlaying = (window.getCurrentlyPlayingSoundId && window.getCurrentlyPlayingSoundId() === sound.id);
     testButton.innerHTML = `<span class="material-symbols-rounded">${isThisSoundPlaying ? 'stop' : 'play_arrow'}</span>`;
@@ -1276,36 +1276,40 @@ export function initializeCardEventListeners() {
     mainContainer.addEventListener('click', (e) => {
         const card = e.target.closest('.tool-card');
         if (!card) {
+            // Si se hace clic fuera de cualquier tarjeta, se cierran todos los menús.
             document.querySelectorAll('.card-dropdown-menu').forEach(m => m.classList.add('disabled'));
             return;
         }
 
         const cardId = card.dataset.id;
         const actionTarget = e.target.closest('[data-action]');
+        if (!actionTarget) return;
 
-        if (e.target.closest('.card-menu-btn')) {
+        const action = actionTarget.dataset.action;
+
+        // Lógica centralizada para abrir/cerrar los menús desplegables
+        const isMenuToggle = action === 'toggle-alarm-menu' ||
+                             action === 'toggle-timer-options' ||
+                             action === 'toggle-card-menu';
+
+        if (isMenuToggle) {
             e.stopPropagation();
             const dropdown = card.querySelector('.card-dropdown-menu');
             if (dropdown) {
                 const isOpening = dropdown.classList.contains('disabled');
+                // Primero, cierra todos los demás menús desplegables
                 document.querySelectorAll('.card-dropdown-menu').forEach(m => {
                     if (m !== dropdown) {
                         m.classList.add('disabled');
                     }
                 });
-                if (isOpening) {
-                    dropdown.classList.remove('disabled');
-                } else {
-                    dropdown.classList.add('disabled');
-                }
+                // Luego, abre o cierra el menú actual
+                dropdown.classList.toggle('disabled');
             }
-            return;
+            return; // Detiene la ejecución para no procesar otras acciones
         }
 
-        if (!actionTarget) return;
-
-        const action = actionTarget.dataset.action;
-
+        // Si la acción no es para abrir un menú, se delega a los manejadores específicos.
         if (card.classList.contains('alarm-card')) {
             handleAlarmCardAction(action, cardId, actionTarget);
         } else if (card.classList.contains('timer-card')) {
@@ -1346,7 +1350,6 @@ export function handleAlarmCardAction(action, alarmId, target) {
             break;
     }
 }
-
 export function handleTimerCardAction(action, timerId, target) {
     if (!window.timerManager) {
         console.error("Timer manager no está disponible.");
@@ -1383,6 +1386,7 @@ export function handleTimerCardAction(action, timerId, target) {
             break;
     }
 }
+
 
 export function handleWorldClockCardAction(action, clockId, target) {
     if (!window.worldClockManager) {

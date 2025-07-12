@@ -532,7 +532,7 @@ function createTimerCard(timer) {
     card.className = 'tool-card timer-card';
     card.id = timer.id;
     card.dataset.id = timer.id;
-    
+
     // Timer terminado si no está corriendo, tiempo es 0, y NO tiene rangAt
     if (!timer.isRunning && timer.remaining <= 0 && !timer.rangAt) {
         card.classList.add('timer-finished');
@@ -551,8 +551,8 @@ function createTimerCard(timer) {
     // Controles específicos para countdown
     let countdownMenu = '';
     if (controlsState.showPlayPause || controlsState.showReset) {
-        const startPauseDisabled = controlsState.isRunning ? 
-            (controlsState.pauseDisabled ? 'disabled-interactive' : '') : 
+        const startPauseDisabled = controlsState.isRunning ?
+            (controlsState.pauseDisabled ? 'disabled-interactive' : '') :
             (controlsState.startDisabled ? 'disabled-interactive' : '');
 
         const playPauseMenu = controlsState.showPlayPause ? `
@@ -600,28 +600,27 @@ function createTimerCard(timer) {
              </button>
         </div>
         <div class="card-menu-container disabled">
-             <button class="card-pin-btn" data-action="pin-timer" data-translate="pin_timer" data-translate-category="tooltips" data-translate-target="tooltip">
+             <button class="card-action-btn" data-action="pin-timer" data-translate="pin_timer" data-translate-category="tooltips" data-translate-target="tooltip">
                  <span class="material-symbols-rounded">push_pin</span>
              </button>
-             <div class="card-menu-btn-wrapper">
-                 <button class="card-menu-btn" data-action="toggle-timer-options"
-                         data-translate="timer_options"
-                         data-translate-category="timer"
-                         data-translate-target="tooltip">
-                     <span class="material-symbols-rounded">more_horiz</span>
-                 </button>
-                 <div class="card-dropdown-menu body-title disabled">
-                     ${countdownMenu}
-                     <div class="menu-link ${controlsState.editDisabled ? 'disabled-interactive' : ''}" data-action="edit-timer">
-                         <div class="menu-link-icon"><span class="material-symbols-rounded">edit</span></div>
-                         <div class="menu-link-text"><span data-translate="edit_timer" data-translate-category="timer">${getTranslation('edit_timer', 'timer')}</span></div>
-                     </div>
-                     ${deleteLinkHtml}
+             <button class="card-action-btn" data-action="toggle-timer-options"
+                     data-translate="timer_options"
+                     data-translate-category="timer"
+                     data-translate-target="tooltip">
+                 <span class="material-symbols-rounded">more_horiz</span>
+             </button>
+             <div class="card-dropdown-menu body-title disabled">
+                 ${countdownMenu}
+                 <div class="menu-link ${controlsState.editDisabled ? 'disabled-interactive' : ''}" data-action="edit-timer">
+                     <div class="menu-link-icon"><span class="material-symbols-rounded">edit</span></div>
+                     <div class="menu-link-text"><span data-translate="edit_timer" data-translate-category="timer">${getTranslation('edit_timer', 'timer')}</span></div>
                  </div>
+                 ${deleteLinkHtml}
              </div>
         </div>
     `;
 
+ // Se añade el event listener directamente aquí para asegurar que siempre se aplique
     const menuContainer = card.querySelector('.card-menu-container');
     card.addEventListener('mouseenter', () => menuContainer?.classList.remove('disabled'));
     card.addEventListener('mouseleave', () => {
@@ -725,24 +724,22 @@ function createTimerSearchResultItem(timer) {
             <span class="result-time">${time}</span>
         </div>
         <div class="card-menu-container disabled"> 
-            <button class="card-pin-btn ${timer.isPinned ? 'active' : ''}" data-action="pin-timer" data-translate="pin_timer" data-translate-category="tooltips" data-translate-target="tooltip">
+             <button class="card-action-btn ${timer.isPinned ? 'active' : ''}" data-action="pin-timer" data-translate="pin_timer" data-translate-category="tooltips" data-translate-target="tooltip">
                  <span class="material-symbols-rounded">push_pin</span>
              </button>
-             <div class="card-menu-btn-wrapper">
-                 <button class="card-menu-btn" data-action="toggle-item-menu"
-                         data-translate="timer_options"
-                         data-translate-category="timer"
-                         data-translate-target="tooltip">
-                     <span class="material-symbols-rounded">more_horiz</span>
-                 </button>
-                 <div class="card-dropdown-menu body-title disabled">
-                     ${dynamicActionsHTML}
-                     <div class="menu-link ${controlsState.editDisabled ? 'disabled-interactive' : ''}" data-action="edit-timer">
-                         <div class="menu-link-icon"><span class="material-symbols-rounded">edit</span></div>
-                         <div class="menu-link-text"><span>${getTranslation('edit_timer', 'timer')}</span></div>
-                     </div>
-                     ${deleteLinkHtml}
+             <button class="card-action-btn" data-action="toggle-item-menu"
+                     data-translate="timer_options"
+                     data-translate-category="timer"
+                     data-translate-target="tooltip">
+                 <span class="material-symbols-rounded">more_horiz</span>
+             </button>
+             <div class="card-dropdown-menu body-title disabled">
+                 ${dynamicActionsHTML}
+                 <div class="menu-link ${controlsState.editDisabled ? 'disabled-interactive' : ''}" data-action="edit-timer">
+                     <div class="menu-link-icon"><span class="material-symbols-rounded">edit</span></div>
+                     <div class="menu-link-text"><span>${getTranslation('edit_timer', 'timer')}</span></div>
                  </div>
+                 ${deleteLinkHtml}
              </div>
         </div>
     `;
@@ -808,7 +805,29 @@ function refreshSearchResults() {
         renderTimerSearchResults(searchInput.value.toLowerCase());
     }
 }
+function addCardEventListeners(card) {
+    const menuContainer = card.querySelector('.card-menu-container');
+    const menuButton = card.querySelector('[data-action="toggle-timer-options"]');
+    const dropdown = card.querySelector('.card-dropdown-menu');
 
+    card.addEventListener('mouseenter', () => {
+        menuContainer?.classList.remove('disabled');
+    });
+    card.addEventListener('mouseleave', () => {
+        if (dropdown?.classList.contains('disabled')) {
+            menuContainer?.classList.add('disabled');
+        }
+    });
+
+    if (menuButton) {
+        menuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (dropdown) {
+                dropdown.classList.toggle('disabled');
+            }
+        });
+    }
+}
 function handleTimerEnd(timerId) {
     const timer = findTimerById(timerId);
     if (!timer) return;

@@ -1,3 +1,5 @@
+// assets/js/tools/alarm-controller.js
+
 // alarm-controller.js - CÓDIGO COMPLETO CON LÓGICA UNIFICADA Y CONSISTENTE
 import { use24HourFormat, activateModule, getCurrentActiveOverlay, allowCardMovement } from '../general/main.js';
 import { prepareAlarmForEdit } from '../general/menu-interactions.js';
@@ -459,28 +461,26 @@ function createSearchResultItem(alarm) {
             <span class="result-time">${time}</span>
         </div>
         <div class="card-menu-container disabled">
-            <div class="card-menu-btn-wrapper">
-                <button class="card-menu-btn" data-action="toggle-item-menu"
-                        data-translate="options"
-                        data-translate-category="world_clock_options"
-                        data-translate-target="tooltip">
-                    <span class="material-symbols-rounded">more_horiz</span>
-                </button>
-                <div class="card-dropdown-menu disabled body-title">
-                     <div class="menu-link ${controlsState.toggleDisabled ? 'disabled-interactive' : ''}" data-action="toggle-alarm">
-                         <div class="menu-link-icon"><span class="material-symbols-rounded">${alarm.enabled ? 'toggle_on' : 'toggle_off'}</span></div>
-                         <div class="menu-link-text"><span data-translate="${alarm.enabled ? 'deactivate_alarm' : 'activate_alarm'}" data-translate-category="alarms">${getTranslation(alarm.enabled ? 'deactivate_alarm' : 'activate_alarm', 'alarms')}</span></div>
-                     </div>
-                     <div class="menu-link ${controlsState.testDisabled ? 'disabled-interactive' : ''}" data-action="test-alarm">
-                         <div class="menu-link-icon"><span class="material-symbols-rounded">volume_up</span></div>
-                         <div class="menu-link-text"><span data-translate="test_alarm" data-translate-category="alarms">${getTranslation('test_alarm', 'alarms')}</span></div>
-                     </div>
-                     <div class="menu-link ${controlsState.editDisabled ? 'disabled-interactive' : ''}" data-action="edit-alarm">
-                         <div class="menu-link-icon"><span class="material-symbols-rounded">edit</span></div>
-                         <div class="menu-link-text"><span data-translate="edit_alarm" data-translate-category="alarms">${getTranslation('edit_alarm', 'alarms')}</span></div>
-                     </div>
-                     ${deleteLinkHtml}
-                </div>
+            <button class="card-action-btn" data-action="toggle-item-menu"
+                    data-translate="options"
+                    data-translate-category="world_clock_options"
+                    data-translate-target="tooltip">
+                <span class="material-symbols-rounded">more_horiz</span>
+            </button>
+            <div class="card-dropdown-menu disabled body-title">
+                 <div class="menu-link ${controlsState.toggleDisabled ? 'disabled-interactive' : ''}" data-action="toggle-alarm">
+                     <div class="menu-link-icon"><span class="material-symbols-rounded">${alarm.enabled ? 'toggle_on' : 'toggle_off'}</span></div>
+                     <div class="menu-link-text"><span data-translate="${alarm.enabled ? 'deactivate_alarm' : 'activate_alarm'}" data-translate-category="alarms">${getTranslation(alarm.enabled ? 'deactivate_alarm' : 'activate_alarm', 'alarms')}</span></div>
+                 </div>
+                 <div class="menu-link ${controlsState.testDisabled ? 'disabled-interactive' : ''}" data-action="test-alarm">
+                     <div class="menu-link-icon"><span class="material-symbols-rounded">volume_up</span></div>
+                     <div class="menu-link-text"><span data-translate="test_alarm" data-translate-category="alarms">${getTranslation('test_alarm', 'alarms')}</span></div>
+                 </div>
+                 <div class="menu-link ${controlsState.editDisabled ? 'disabled-interactive' : ''}" data-action="edit-alarm">
+                     <div class="menu-link-icon"><span class="material-symbols-rounded">edit</span></div>
+                     <div class="menu-link-text"><span data-translate="edit_alarm" data-translate-category="alarms">${getTranslation('edit_alarm', 'alarms')}</span></div>
+                 </div>
+                 ${deleteLinkHtml}
             </div>
         </div>
     `;
@@ -667,28 +667,26 @@ function createAlarmCard(alarm) {
                 </button>
             </div>
             <div class="card-menu-container disabled">
-                <div class="card-menu-btn-wrapper">
-                    <button class="card-menu-btn" data-action="toggle-alarm-menu"
-                            data-translate="options"
-                            data-translate-category="world_clock_options"
-                            data-translate-target="tooltip">
-                        <span class="material-symbols-rounded">more_horiz</span>
-                    </button>
-                    <div class="card-dropdown-menu disabled body-title">
-                        <div class="menu-link ${controlsState.toggleDisabled ? 'disabled-interactive' : ''}" data-action="toggle-alarm">
-                            <div class="menu-link-icon"><span class="material-symbols-rounded">${alarm.enabled ? 'toggle_on' : 'toggle_off'}</span></div>
-                            <div class="menu-link-text"><span data-translate="${alarm.enabled ? 'deactivate_alarm' : 'activate_alarm'}" data-translate-category="alarms">${getTranslation(alarm.enabled ? 'deactivate_alarm' : 'activate_alarm', 'alarms')}</span></div>
-                        </div>
-                        <div class="menu-link ${controlsState.testDisabled ? 'disabled-interactive' : ''}" data-action="test-alarm">
-                            <div class="menu-link-icon"><span class="material-symbols-rounded">volume_up</span></div>
-                            <div class="menu-link-text"><span data-translate="test_alarm" data-translate-category="alarms">${getTranslation('test_alarm', 'alarms')}</span></div>
-                        </div>
-                        <div class="menu-link ${controlsState.editDisabled ? 'disabled-interactive' : ''}" data-action="edit-alarm">
-                            <div class="menu-link-icon"><span class="material-symbols-rounded">edit</span></div>
-                            <div class="menu-link-text"><span data-translate="edit_alarm" data-translate-category="alarms">${getTranslation('edit_alarm', 'alarms')}</span></div>
-                        </div>
-                        ${deleteLinkHtml}
+                <button class="card-action-btn" data-action="toggle-alarm-menu"
+                        data-translate="options"
+                        data-translate-category="world_clock_options"
+                        data-translate-target="tooltip">
+                    <span class="material-symbols-rounded">more_horiz</span>
+                </button>
+                <div class="card-dropdown-menu disabled body-title">
+                    <div class="menu-link ${controlsState.toggleDisabled ? 'disabled-interactive' : ''}" data-action="toggle-alarm">
+                        <div class="menu-link-icon"><span class="material-symbols-rounded">${alarm.enabled ? 'toggle_on' : 'toggle_off'}</span></div>
+                        <div class="menu-link-text"><span data-translate="${alarm.enabled ? 'deactivate_alarm' : 'activate_alarm'}" data-translate-category="alarms">${getTranslation(alarm.enabled ? 'deactivate_alarm' : 'activate_alarm', 'alarms')}</span></div>
                     </div>
+                    <div class="menu-link ${controlsState.testDisabled ? 'disabled-interactive' : ''}" data-action="test-alarm">
+                        <div class="menu-link-icon"><span class="material-symbols-rounded">volume_up</span></div>
+                        <div class="menu-link-text"><span data-translate="test_alarm" data-translate-category="alarms">${getTranslation('test_alarm', 'alarms')}</span></div>
+                    </div>
+                    <div class="menu-link ${controlsState.editDisabled ? 'disabled-interactive' : ''}" data-action="edit-alarm">
+                        <div class="menu-link-icon"><span class="material-symbols-rounded">edit</span></div>
+                        <div class="menu-link-text"><span data-translate="edit_alarm" data-translate-category="alarms">${getTranslation('edit_alarm', 'alarms')}</span></div>
+                    </div>
+                    ${deleteLinkHtml}
                 </div>
             </div>
         </div>
@@ -706,7 +704,7 @@ function addCardEventListeners(card) {
         menuContainer?.classList.remove('disabled');
     });
     card.addEventListener('mouseleave', () => {
-        const dropdown = menuContainer?.querySelector('.card-dropdown-menu');
+        const dropdown = card.querySelector('.card-dropdown-menu');
         if (dropdown?.classList.contains('disabled')) {
             menuContainer?.classList.add('disabled');
         }
