@@ -13,39 +13,32 @@ import { getCurrentLocation } from './location-manager.js';
 let onConfirmCallback = null;
 let activeModalType = null;
 
-// --- INICIO DE LA MODIFICACIÓN ---
 const CREATION_TIMEOUT = 500;
-// --- FIN DE LA MODIFICACIÓN ---
 
 function populateConfirmationModal(data) {
     const modalMenu = document.querySelector('.menu-delete');
     if (!modalMenu) return;
 
-    // ----- CÓDIGO CORREGIDO: SE CAMBIARON LOS SELECTORES A data-delete-item -----
     const headerTitleElement = modalMenu.querySelector('[data-delete-item="header-title"]');
     const itemTypeLabelElement = modalMenu.querySelector('[data-delete-item="item-type-label"]');
     const itemNameElement = modalMenu.querySelector('[data-delete-item="name"]');
-    // Se elimina la referencia a 'confirmation-message' ya que no existe en el HTML
-    const confirmButton = modalMenu.querySelector('.menu-button--danger'); // Selector más específico
-    const cancelButton = modalMenu.querySelector('.menu-button:not(.menu-button--danger)'); // Selector más específico
+    const confirmButton = modalMenu.querySelector('.menu-button--danger');
+    const cancelButton = modalMenu.querySelector('.menu-button:not(.menu-button--danger)');
 
     if (!headerTitleElement || !itemTypeLabelElement || !itemNameElement || !confirmButton || !cancelButton) {
         console.error("Elementos del modal de confirmación no encontrados. Revisa el HTML.");
         return;
     }
-    // ----- FIN DEL CÓDIGO CORREGIDO -----
 
     const { type: itemType, name } = data;
 
     const headerTitleKey = `confirm_delete_title_${itemType}`;
-    const messageKey = `confirm_delete_message_${itemType}`; // Aunque no se usa, lo mantenemos por si se añade en el futuro
     const itemTypeLabelKey = `delete_${itemType}_title_prefix`;
 
     headerTitleElement.textContent = getTranslation(headerTitleKey, 'confirmation');
     itemTypeLabelElement.textContent = getTranslation(itemTypeLabelKey, 'confirmation');
-    itemNameElement.value = name; // El nombre del item se pone en el input
+    itemNameElement.value = name;
 
-    // Asignar traducciones a los botones
     confirmButton.querySelector('span').setAttribute('data-translate', 'delete');
     confirmButton.querySelector('span').textContent = getTranslation('delete', 'confirmation');
 
@@ -62,28 +55,23 @@ function setupModalEventListeners() {
     const cancelBtn = deleteMenu.querySelector('.menu-button:not(.menu-button--danger)');
 
     if (confirmBtn) {
-        // Se reemplaza el botón para evitar acumulación de listeners
         const newConfirmBtn = confirmBtn.cloneNode(true);
         confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
 
-        // --- INICIO DE LA MODIFICACIÓN ---
         newConfirmBtn.addEventListener('click', () => {
-            // 1. Añade el spinner y deshabilita el botón
             addSpinnerToCreateButton(newConfirmBtn);
 
-            // 2. Espera el tiempo definido en CREATION_TIMEOUT
             setTimeout(() => {
-                // 3. Ejecuta la función de borrado
                 if (typeof onConfirmCallback === 'function') {
                     onConfirmCallback();
                 }
-                // 4. Cierra el modal de confirmación
                 hideModal();
-                // Nota: No es necesario remover el spinner manualmente,
-                // ya que el menú se oculta y se reiniciará la próxima vez que se abra.
+                // --- INICIO DE LA CORRECCIÓN ---
+                // Se restablece el botón después de la acción.
+                removeSpinnerFromCreateButton(newConfirmBtn);
+                // --- FIN DE LA CORRECCIÓN ---
             }, CREATION_TIMEOUT);
         });
-        // --- FIN DE LA MODIFICACIÓN ---
     }
 
     if (cancelBtn) {
@@ -93,14 +81,13 @@ function setupModalEventListeners() {
     }
 }
 
+
 export function showModal(type, data = {}, onConfirm = null) {
     activeModalType = type;
 
     if (type === 'confirmation') {
         onConfirmCallback = onConfirm;
-        // Primero activa el módulo para que sea visible
         activateModule('toggleDeleteMenu');
-        // Ejecuta directamente sin delay
         populateConfirmationModal(data);
         setupModalEventListeners();
 
@@ -262,7 +249,7 @@ function getMenuElement(menuName) {
         'timePicker': '.menu-timePicker[data-menu="timePicker"]',
         'timeZone': '.menu-timeZone[data-menu="timeZone"]',
         'menuFeedbackTypes': '.menu-feedback-types[data-menu="feedbackTypes"]',
-        'menuFeedback': '.menu-feedback[data-menu="feedback"]' // <-- Entrada añadida
+        'menuFeedback': '.menu-feedback[data-menu="feedback"]'
     };
     return document.querySelector(menuSelectorMap[menuName]);
 };
@@ -885,10 +872,7 @@ async function populateSoundsMenu(context) {
     } else if (context === 'count_to_date') {
         activeSoundId = state.timer.countTo.sound;
     }
-    // --- INICIO DE LA MODIFICACIÓN ---
-    // Cambiamos el data-action a 'stageSound'
     await generateSoundList(uploadContainer, listContainer, 'stageSound', activeSoundId);
-    // --- FIN DE LA MODIFICACIÓN ---
 }
 
 function setupGlobalEventListeners() {
@@ -1168,8 +1152,6 @@ async function handleMenuClick(event, parentMenu) {
                     if (menuLink) {
                         menuLink.classList.remove('sound-playing');
                         
-                        // --- LÓGICA CORREGIDA ---
-                        // Solo ocultar el menú si el cursor no está encima.
                         if (menuLink.dataset.hovering !== 'true') {
                             const menuContainer = menuLink.querySelector('.card-menu-container');
                             if (menuContainer) {
@@ -1492,11 +1474,9 @@ async function handleMenuClick(event, parentMenu) {
     }
 }
 function initializeFeedbackForm() {
-    // MODIFICADO: Seleccionar el contenedor principal del menú de feedback
     const feedbackMenu = document.querySelector('.menu-feedback[data-menu="feedback"]');
     if (!feedbackMenu) return;
 
-    // MODIFICADO: El evento ahora es un 'click' en el botón de envío
     const submitButton = feedbackMenu.querySelector('[data-action="submit-feedback-form"]');
     if (!submitButton) return;
 
@@ -1532,7 +1512,6 @@ function initializeFeedbackForm() {
 
         setTimeout(async () => {
             try {
-                // MODIFICADO: Crear FormData manualmente ya que no hay <form>
                 const formData = new FormData();
                 formData.append('feedback_type', typeInput.value);
                 formData.append('email', emailInput.value);
@@ -1552,7 +1531,6 @@ function initializeFeedbackForm() {
                 if (result.success) {
                     showDynamicIslandNotification('system', 'success', result.message, 'notifications');
                     
-                    // MODIFICADO: Resetear campos manualmente
                     emailInput.value = '';
                     messageInput.value = '';
                     typeInput.value = 'contact_support';
@@ -1583,7 +1561,6 @@ function initializeFeedbackForm() {
     }
 }
 
-// Asegurarse de que la función se llama al cargar la página
 document.addEventListener('DOMContentLoaded', initializeFeedbackForm);
 
 window.getCurrentlyPlayingSoundId = () => currentlyPlayingSound ? currentlyPlayingSound.id : null;
