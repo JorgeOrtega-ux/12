@@ -1325,47 +1325,52 @@ function handleDeleteTimer(timerId) {
 
     const timerName = timerToDelete.id.startsWith('default-timer-') ? getTranslation(timerToDelete.title, 'timer') : timerToDelete.title;
 
-    showModal('confirmation', { type: 'timer', name: timerName }, () => {
-        trackEvent('interaction', 'delete_timer'); // <-- EVENTO AÑADIDO
-        if (activeTimers.has(timerId)) {
-            clearTimeout(activeTimers.get(timerId));
-            activeTimers.delete(timerId);
-        }
-        const originalTitle = timerToDelete.id.startsWith('default-timer-') ? getTranslation(timerToDelete.title, 'timer') : timerToDelete.title;
+    // --- INICIO DE LA CORRECCIÓN ---
+    activateModule('overlayContainer');
+    setTimeout(() => {
+        showModal('confirmation', { type: 'timer', name: timerName }, () => {
+            trackEvent('interaction', 'delete_timer');
+            if (activeTimers.has(timerId)) {
+                clearTimeout(activeTimers.get(timerId));
+                activeTimers.delete(timerId);
+            }
+            const originalTitle = timerToDelete.id.startsWith('default-timer-') ? getTranslation(timerToDelete.title, 'timer') : timerToDelete.title;
 
-        const userIndex = userTimers.findIndex(t => t.id === timerId);
-        if (userIndex !== -1) {
-            userTimers.splice(userIndex, 1);
-            saveTimersToStorage();
-        }
+            const userIndex = userTimers.findIndex(t => t.id === timerId);
+            if (userIndex !== -1) {
+                userTimers.splice(userIndex, 1);
+                saveTimersToStorage();
+            }
 
-        if (pinnedTimerId === timerId) {
-            const allTimers = [...userTimers, ...defaultTimersState];
-            pinnedTimerId = allTimers.length > 0 ? allTimers[0].id : null;
-            if (pinnedTimerId) {
-                const newPinnedTimer = findTimerById(pinnedTimerId);
-                if (newPinnedTimer) {
-                    newPinnedTimer.isPinned = true;
-                    const isUser = userTimers.some(t => t.id === newPinnedTimer.id);
-                    if (isUser) saveTimersToStorage(); else saveDefaultTimersOrder();
+            if (pinnedTimerId === timerId) {
+                const allTimers = [...userTimers, ...defaultTimersState];
+                pinnedTimerId = allTimers.length > 0 ? allTimers[0].id : null;
+                if (pinnedTimerId) {
+                    const newPinnedTimer = findTimerById(pinnedTimerId);
+                    if (newPinnedTimer) {
+                        newPinnedTimer.isPinned = true;
+                        const isUser = userTimers.some(t => t.id === newPinnedTimer.id);
+                        if (isUser) saveTimersToStorage(); else saveDefaultTimersOrder();
+                    }
                 }
             }
-        }
 
-        renderAllTimerCards();
-        updateMainDisplay();
-        updateMainControlsState();
-        updateTimerCounts();
-        refreshSearchResults();
-        if (window.hideDynamicIsland) {
-            window.hideDynamicIsland();
-        }
+            renderAllTimerCards();
+            updateMainDisplay();
+            updateMainControlsState();
+            updateTimerCounts();
+            refreshSearchResults();
+            if (window.hideDynamicIsland) {
+                window.hideDynamicIsland();
+            }
 
-        showDynamicIslandNotification('timer', 'deleted', 'timer_deleted', 'notifications', {
-            title: originalTitle
+            showDynamicIslandNotification('timer', 'deleted', 'timer_deleted', 'notifications', {
+                title: originalTitle
+            });
+            updateEverythingWidgets();
         });
-        updateEverythingWidgets();
-    });
+    }, 50);
+    // --- FIN DE LA CORRECCIÓN ---
 }
 
 function initializeSortableGrids() {

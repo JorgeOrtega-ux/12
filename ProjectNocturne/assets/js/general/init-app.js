@@ -330,19 +330,24 @@ function initializeMainComponents() {
     initializeCategorySliderService();
     initializeCentralizedFontManager();
     initializeFullScreenManager();
-    initializeCardEventListeners();
+    
+    // --- INICIO DE LA CORRECCIÓN ---
+    // Se mueve la inicialización de los listeners de las tarjetas después de que los módulos de herramientas se hayan inicializado.
     initColorTextSystem();
     initColorSearchSystem();
     initializeAlarmClock();
     initWorldClock();
     initializeStopwatch();
     initializeTimerController();
+    initializeCardEventListeners(); // <- MOVIMOS ESTA LÍNEA AQUÍ
     initLocationManager();
     setupEventListeners();
     batchMigrateTooltips();
     initializeMobileSidebarTooltips();
     initializeScrollShadow();
+    // --- FIN DE LA CORRECCIÓN ---
 }
+
 
 function finalizeInitialization() {
     applicationState.isReady = true;

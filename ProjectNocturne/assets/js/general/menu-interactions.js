@@ -66,10 +66,7 @@ function setupModalEventListeners() {
                     onConfirmCallback();
                 }
                 hideModal();
-                // --- INICIO DE LA CORRECCIÓN ---
-                // Se restablece el botón después de la acción.
                 removeSpinnerFromCreateButton(newConfirmBtn);
-                // --- FIN DE LA CORRECCIÓN ---
             }, CREATION_TIMEOUT);
         });
     }
@@ -77,22 +74,20 @@ function setupModalEventListeners() {
     if (cancelBtn) {
         const newCancelBtn = cancelBtn.cloneNode(true);
         cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
-        newCancelBtn.addEventListener('click', () => hideModal());
+        newCancelBtn.addEventListener('click', () => navigateBack());
     }
 }
 
-
 export function showModal(type, data = {}, onConfirm = null) {
     activeModalType = type;
+    onConfirmCallback = onConfirm;
 
     if (type === 'confirmation') {
-        onConfirmCallback = onConfirm;
-        activateModule('toggleDeleteMenu');
+        navigateToMenu('delete');
         populateConfirmationModal(data);
         setupModalEventListeners();
-
     } else if (type === 'feedback') {
-        activateModule('toggleFeedbackMenu');
+        navigateToMenu('feedback');
     }
 }
 

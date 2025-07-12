@@ -63,19 +63,10 @@ function getAlarmControlsState(alarm) {
     const hasRangAt = !!alarm.rangAt;
     
     return {
-        // Toggle: Siempre habilitado excepto si está sonando
         toggleDisabled: isRinging,
-        
-        // Test: Siempre habilitado excepto si está sonando  
         testDisabled: isRinging,
-        
-        // Edit: Siempre habilitado excepto si está sonando
         editDisabled: isRinging,
-        
-        // Delete: Siempre habilitado excepto si está sonando
         deleteDisabled: isRinging,
-        
-        // Estados adicionales
         isRinging,
         isEnabled,
         hasRangAt
@@ -140,7 +131,6 @@ function loadAndRestoreAlarms() {
         loadDefaultAlarmsOrder();
     }
 
-    // ========== RESTAURACIÓN INTELIGENTE DE ALARMAS ==========
     if (lastVisitTime) {
         const now = Date.now();
         console.log(`⏰ Analizando alarmas para restauración desde ${new Date(lastVisitTime).toLocaleString()}`);
@@ -149,26 +139,20 @@ function loadAndRestoreAlarms() {
             alarm.type = alarm.id.startsWith('default-') ? 'default' : 'user';
 
             if (alarm.isRinging) {
-                // ========== ALARMA ESTABA SONANDO ==========
                 console.log(`🔧 RESTAURACIÓN: Alarma ${alarm.id} estaba sonando cuando se cerró la web`);
                 
-                // Calculamos cuándo debió sonar basándose en datos disponibles
-                let whenItRang = now; // fallback final
+                let whenItRang = now;
                 
                 if (alarm.lastTriggered) {
-                    // Caso 1: Tenemos lastTriggered (momento exacto cuando se activó la alarma)
                     whenItRang = alarm.lastTriggered;
                     console.log(`   - Usando lastTriggered: ${new Date(alarm.lastTriggered).toLocaleString()}`);
                 } else {
-                    // Caso 2: Estimamos basándose en la hora programada más reciente
                     const todayAlarmTime = new Date();
                     todayAlarmTime.setHours(alarm.hour, alarm.minute, 0, 0);
                     
                     if (todayAlarmTime <= now) {
-                        // La alarma de hoy ya pasó
                         whenItRang = todayAlarmTime.getTime();
                     } else {
-                        // La alarma de hoy no ha pasado, debe haber sonado ayer
                         const yesterdayAlarmTime = new Date(todayAlarmTime);
                         yesterdayAlarmTime.setDate(yesterdayAlarmTime.getDate() - 1);
                         whenItRang = yesterdayAlarmTime.getTime();
@@ -182,13 +166,11 @@ function loadAndRestoreAlarms() {
                 console.log(`   ✅ Restaurada con tag offline: rangAt=${new Date(alarm.rangAt).toLocaleString()}`);
                 
             } else if (alarm.enabled) {
-                // ========== VERIFICAR SI DEBIÓ SONAR MIENTRAS ESTABA CERRADA ==========
                 const todayAlarmTime = new Date();
                 todayAlarmTime.setHours(alarm.hour, alarm.minute, 0, 0);
 
                 let lastExpectedRingTime = todayAlarmTime;
                 if (todayAlarmTime > now) {
-                    // Si la alarma de hoy no ha pasado, verificamos la de ayer
                     lastExpectedRingTime.setDate(lastExpectedRingTime.getDate() - 1);
                 }
                 
@@ -223,7 +205,6 @@ function toggleAlarm(alarmId) {
     
     alarm.enabled = !alarm.enabled;
     
-    // Limpiar tag al activar
     if (alarm.enabled) {
         clearRangAtTag(alarmId);
     }
@@ -292,7 +273,6 @@ function updateAlarmCardVisuals(alarm) {
         toggleText.textContent = getTranslation(key, 'alarms');
     }
 
-    // ========== MANEJO DEL TAG "SONÓ HACE..." ==========
     let rangAgoTag = card.querySelector('.rang-ago-tag');
     
     if (shouldShowRangAtTag(alarm)) {
@@ -309,7 +289,6 @@ function updateAlarmCardVisuals(alarm) {
         console.log(`   🗑️ Tag "sonó hace..." eliminado`);
     }
 
-    // Actualizar clase de alarma deshabilitada
     card.classList.toggle('alarm-disabled', !alarm.enabled);
     updateAlarmControlsState();
 }
@@ -317,13 +296,11 @@ function updateAlarmCardVisuals(alarm) {
 function updateAlarmControlsState() {
     const isAnyRinging = [...userAlarms, ...defaultAlarmsState].some(a => a.isRinging);
 
-    // Botones para añadir alarmas
     const addAlarmBtns = document.querySelectorAll('[data-module="toggleMenuAlarm"]');
     addAlarmBtns.forEach(btn => {
         btn.classList.toggle('disabled-interactive', isAnyRinging);
     });
 
-    // Controles de tarjetas individuales
     const allCards = document.querySelectorAll('.tool-card.alarm-card, .search-result-item[data-type="alarm"]');
     allCards.forEach(card => {
         const alarm = findAlarmById(card.dataset.id);
@@ -411,7 +388,6 @@ function dismissAlarm(alarmId) {
     console.log(`🔕 Descartando alarma ${alarmId} - NO generar tag (usuario se enteró del sonido)`);
 
     alarm.isRinging = false;
-    // ✅ NO establecer rangAt porque el usuario se enteró del sonido
     delete alarm.rangAt;
 
     if (alarm.enabled) {
@@ -446,9 +422,8 @@ function renderAlarmSearchResults(searchTerm) {
 
     const resultsWrapper = menuElement.querySelector('.search-results-wrapper');
     const creationWrapper = menuElement.querySelector('.creation-wrapper');
-    const menuBottom = menuElement.querySelector('.menu-section-bottom'); // <- Elemento añadido
+    const menuBottom = menuElement.querySelector('.menu-section-bottom');
 
-    // Se añade la verificación para menuBottom
     if (!resultsWrapper || !creationWrapper || !menuBottom) return;
 
     if (!searchTerm) {
@@ -564,9 +539,7 @@ function addSearchItemEventListeners(item) {
         if (action === 'toggle-item-menu') {
             const dropdown = item.querySelector('.card-dropdown-menu');
             const isOpening = dropdown.classList.contains('disabled');
-            // ***** INICIO DE LA CORRECCIÓN *****
             document.querySelectorAll('.search-results-wrapper .card-dropdown-menu').forEach(d => {
-            // ***** FIN DE LA CORRECCIÓN *****
                 if (d !== dropdown) {
                     d.classList.add('disabled');
                 }
@@ -692,7 +665,6 @@ function createAlarmCard(alarm) {
         </div>
     `;
 
-    // ========== GENERAR TAG "SONÓ HACE..." ==========
     let rangAgoTag = '';
     if (shouldShowRangAtTag(alarm)) {
         const timeAgo = formatTimeSince(alarm.rangAt);
@@ -912,10 +884,20 @@ function handleDeleteAlarm(alarmId) {
     if (!alarm) return;
 
     const alarmName = alarm.type === 'default' ? getTranslation(alarm.title, 'alarms') : alarm.title;
-    showModal('confirmation', { type: 'alarm', name: alarmName }, () => {
-        deleteAlarm(alarmId);
-    });
+    
+    // --- INICIO DE LA CORRECCIÓN ---
+    // Se activa el contenedor del overlay antes de mostrar el modal.
+    activateModule('overlayContainer');
+    
+    // Se usa un pequeño retardo para asegurar que el overlay esté visible antes de la navegación interna.
+    setTimeout(() => {
+        showModal('confirmation', { type: 'alarm', name: alarmName }, () => {
+            deleteAlarm(alarmId);
+        });
+    }, 50);
+    // --- FIN DE LA CORRECCIÓN ---
 }
+
 
 function testAlarm(alarmId) {
     const alarm = findAlarmById(alarmId);
@@ -999,7 +981,7 @@ export function initializeAlarmClock() {
             activeAlarms.forEach(alarm => {
                 const alarmTime = alarm.hour * 60 + alarm.minute;
                 let diff = alarmTime - currentTime;
-                if (diff <= 0) diff += 1440; // Next day
+                if (diff <= 0) diff += 1440;
                 
                 if (diff < minDiff) {
                     minDiff = diff;

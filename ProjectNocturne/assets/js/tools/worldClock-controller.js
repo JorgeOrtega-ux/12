@@ -576,38 +576,43 @@ function deleteClock(clockId) {
 
     const clockTitle = card.dataset.title;
 
-    showModal('confirmation', { type: 'world-clock', name: clockTitle }, () => {
-        trackEvent('interaction', 'delete_clock'); // <-- EVENTO AÑADIDO
-        const isPinned = card.querySelector('.card-pin-btn.active');
+    // --- INICIO DE LA CORRECCIÓN ---
+    activateModule('overlayContainer');
+    setTimeout(() => {
+        showModal('confirmation', { type: 'world-clock', name: clockTitle }, () => {
+            trackEvent('interaction', 'delete_clock');
+            const isPinned = card.querySelector('.card-pin-btn.active');
 
-        if (clockIntervals.has(card)) {
-            clearInterval(clockIntervals.get(card));
-            clockIntervals.delete(card);
-        }
+            if (clockIntervals.has(card)) {
+                clearInterval(clockIntervals.get(card));
+                clockIntervals.delete(card);
+            }
 
-        userClocks = userClocks.filter(clock => clock.id !== clockId);
-        saveClocksToStorage();
-        card.remove();
+            userClocks = userClocks.filter(clock => clock.id !== clockId);
+            saveClocksToStorage();
+            card.remove();
 
-        const searchItem = document.getElementById(`search-clock-${clockId}`);
-        if (searchItem) searchItem.remove();
+            const searchItem = document.getElementById(`search-clock-${clockId}`);
+            if (searchItem) searchItem.remove();
 
-        if (isPinned) {
-            const localClockCard = document.querySelector('.local-clock-card');
-            const localPinBtn = localClockCard.querySelector('.card-pin-btn');
-            pinClock(localPinBtn);
-        }
+            if (isPinned) {
+                const localClockCard = document.querySelector('.local-clock-card');
+                const localPinBtn = localClockCard.querySelector('.card-pin-btn');
+                pinClock(localPinBtn);
+            }
 
-        showDynamicIslandNotification('worldclock', 'deleted', 'worldclock_deleted', 'notifications', {
-            title: clockTitle
+            showDynamicIslandNotification('worldclock', 'deleted', 'worldclock_deleted', 'notifications', {
+                title: clockTitle
+            });
+
+            if (typeof updateEverythingWidgets === 'function') {
+                updateEverythingWidgets();
+            }
+
+            refreshWorldClockSearchResults();
         });
-
-        if (typeof updateEverythingWidgets === 'function') {
-            updateEverythingWidgets();
-        }
-
-        refreshWorldClockSearchResults();
-    });
+    }, 50);
+    // --- FIN DE LA CORRECCIÓN ---
 }
 function updateMainPinnedDisplay(card) {
     if (mainDisplayInterval) {
